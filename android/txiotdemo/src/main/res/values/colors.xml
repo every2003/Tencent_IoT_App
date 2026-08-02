@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="iot_purple_200">#FFBB86FC</color>
+    <color name="iot_purple_500">#FF6200EE</color>
+    <color name="iot_purple_700">#FF3700B3</color>
+    <color name="iot_teal_200">#FF03DAC5</color>
+    <color name="iot_teal_700">#FF018786</color>
+    <color name="iot_black">#FF000000</color>
+    <color name="iot_white">#FFFFFFFF</color>
+    <color name="iot_primary_color">#006EFF</color>
+    <color name="iot_blue_006EFF">#006EFF</color>
+    <color name="iot_gray_666666">#666666</color>
+    <color name="iot_gray_999999">#999999</color>
+    <color name="iot_gray_F5F5F5">#F5F5F5</color>
+    <color name="iot_gray_e6e6e6">#E6E6E6</color>
+    <color name="iot_black_333333">#333333</color>
+    <color name="iot_gray_cccccc">#CCCCCC</color>
+    <color name="iot_gray_E7E8EB">#E7E8EB</color>
+    <color name="iot_green_1aad19">#1AAD19</color>
+    <color name="iot_black_15161A">#15161A</color>
+    <color name="iot_textPrimary">@color/iot_black_15161A</color>
+    <color name="iot_primaryColor">@color/iot_blue_006EFF</color>
+    <color name="iot_translucent">#00FFFFFF</color>
+    <color name="iot_black_transparent">#80000000</color>
+</resources>

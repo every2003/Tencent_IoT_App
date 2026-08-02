@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:background="#E0E4EC" />
+
+    <TextView
+        android:id="@+id/iot_tvCommonTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="4dp"
+        android:textColor="#15161A"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/iot_tvCommonHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="10dp"
+        android:textColor="#9DA3B0"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <View
+        android:id="@+id/iot_vCommonDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="#ECEEF2"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/iot_flCommonContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+    <LinearLayout
+        android:id="@+id/iot_llCommonButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="28dp">
+
+        <TextView
+            android:id="@+id/iot_btnCommonConfirm"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/iot_bg_primary_button"
+            android:gravity="center"
+            android:text="@string/iot_btn_confirm"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/iot_btnCommonCancel"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/iot_bg_cancel_button"
+            android:gravity="center"
+            android:text="@string/iot_btn_cancel"
+            android:textColor="#6B7280"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

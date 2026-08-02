@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+    <path
+        android:strokeColor="@color/iot_white"
+        android:strokeWidth="2"
+        android:fillColor="@color/iot_translucent"
+        android:pathData="M10,10 L230,10 L230,230 L10,230 Z" />
+
+    <path
+        android:strokeColor="@color/iot_white"
+        android:strokeWidth="4"
+        android:pathData="M10,10 L40,10 M10,10 L10,40" />
+
+    <path
+        android:strokeColor="@color/iot_white"
+        android:strokeWidth="4"
+        android:pathData="M230,10 L200,10 M230,10 L230,40" />
+
+    <path
+        android:strokeColor="@color/iot_white"
+        android:strokeWidth="4"
+        android:pathData="M10,230 L40,230 M10,230 L10,200" />
+
+    <path
+        android:strokeColor="@color/iot_white"
+        android:strokeWidth="4"
+        android:pathData="M230,230 L200,230 M230,230 L230,200" />
+
+</vector>

@@ -1,0 +1,379 @@
+<resources>
+    <string name="iot_app_name">TXIoTDemo</string>
+    <string name="iot_nick">昵称</string>
+    <string name="iot_logout">退出登录</string>
+    <string name="iot_back">返回</string>
+    <string name="iot_qr_code_scanner">二维码扫描</string>
+    <string name="iot_scan_qr_code_hint">将二维码放入框内，即可自动扫描</string>
+
+    <!-- DeviceListActivity - 通用 -->
+    <string name="iot_login_success">登录成功</string>
+    <string name="iot_login_failure">登录失败：%s</string>
+    <string name="iot_refresh_failed">刷新失败：%s</string>
+    <string name="iot_device_unbind_success">设备解绑成功</string>
+    <string name="iot_device_unbind_failed">解绑失败：%s</string>
+    <string name="iot_device_status_online">在线</string>
+    <string name="iot_device_status_offline">离线</string>
+
+    <!-- DeviceListActivity - 家庭 -->
+    <string name="iot_family_default_name">🏠 我的家</string>
+    <string name="iot_family_current_label">当前：%s</string>
+    <string name="iot_family_select_title">🏠 选择家庭</string>
+    <string name="iot_family_unnamed">未命名</string>
+    <string name="iot_family_get_list_failed">获取家庭列表失败：%s</string>
+    <string name="iot_family_create_failed">创建家庭失败：%s</string>
+    <string name="iot_family_manage_title">🏠 家庭管理</string>
+    <string name="iot_family_menu_rename">修改家庭名称</string>
+    <string name="iot_family_menu_create">新建家庭</string>
+    <string name="iot_family_menu_rooms">🚪 管理房间</string>
+    <string name="iot_family_menu_members">👥 管理成员</string>
+    <string name="iot_family_menu_delete">删除当前家庭</string>
+    <string name="iot_family_rename_title">✏️ 修改家庭名称</string>
+    <string name="iot_family_rename_hint">请输入家庭名称</string>
+    <string name="iot_family_rename_success">家庭名称已更新</string>
+    <string name="iot_family_rename_failed">更新失败：%s</string>
+    <string name="iot_family_create_title">🏠 新建家庭</string>
+    <string name="iot_family_create_hint">请输入家庭名称</string>
+    <string name="iot_family_create_success">家庭「%s」创建成功</string>
+    <string name="iot_family_delete_title">🗑️ 删除家庭</string>
+    <string name="iot_family_delete_message">确定要删除「%s」吗？\n删除后家庭内所有数据将无法恢复</string>
+    <string name="iot_family_delete_success">家庭已删除</string>
+    <string name="iot_family_delete_failed">删除失败：%s</string>
+    <string name="iot_btn_create">创建</string>
+    <string name="iot_btn_delete">删除</string>
+    <string name="iot_btn_confirm">确定</string>
+    <string name="iot_btn_cancel">取消</string>
+    <string name="iot_btn_invite">邀请</string>
+
+    <!-- DeviceListActivity - 房间 -->
+    <string name="iot_room_manage_title">房间管理</string>
+    <string name="iot_room_count_label">共 %d 个房间</string>
+    <string name="iot_room_add_item">新建房间</string>
+    <string name="iot_room_get_list_failed">获取房间列表失败：%s</string>
+    <string name="iot_room_create_title">新建房间</string>
+    <string name="iot_room_create_hint">请输入房间名称</string>
+    <string name="iot_room_create_success">房间「%s」创建成功</string>
+    <string name="iot_room_create_failed">创建房间失败：%s</string>
+    <string name="iot_room_options_default_title">房间操作</string>
+    <string name="iot_room_menu_rename">重命名</string>
+    <string name="iot_room_menu_delete">删除房间</string>
+    <string name="iot_room_rename_title">重命名房间</string>
+    <string name="iot_room_rename_hint">请输入房间名称</string>
+    <string name="iot_room_rename_success">房间名称已更新为：%s</string>
+    <string name="iot_room_rename_failed">修改失败：%s</string>
+    <string name="iot_room_delete_title">删除房间</string>
+    <string name="iot_room_delete_message">确定要删除「%s」吗？</string>
+    <string name="iot_room_delete_success">房间已删除</string>
+    <string name="iot_room_delete_failed">删除失败：%s</string>
+
+    <!-- DeviceListActivity - 成员 -->
+    <string name="iot_member_manage_title">👥 成员管理</string>
+    <string name="iot_member_count_label">共 %d 位成员</string>
+    <string name="iot_member_add_item">👤＋ 邀请成员</string>
+    <string name="iot_member_get_list_failed">获取成员列表失败：%s</string>
+    <string name="iot_member_role_admin">管理员</string>
+    <string name="iot_member_role_normal">成员</string>
+    <string name="iot_member_invite_title">👤＋ 邀请成员</string>
+    <string name="iot_member_invite_hint">请输入用户 ID</string>
+    <string name="iot_member_invite_as_normal">邀请为普通成员</string>
+    <string name="iot_member_invite_as_admin">邀请为管理员</string>
+    <string name="iot_member_invite_success">已邀请用户 %s（%s）</string>
+    <string name="iot_member_invite_failed">邀请失败：%s</string>
+    <string name="iot_member_remove_title">👤 移出成员</string>
+    <string name="iot_member_remove_message">确定要将「%s」移出家庭吗？</string>
+    <string name="iot_member_remove_btn">移出</string>
+    <string name="iot_member_remove_success">成员已移出家庭</string>
+    <string name="iot_member_remove_failed">删除失败：%s</string>
+
+    <string name="iot_family_menu_leave">退出当前家庭</string>
+    <string name="iot_family_leave_title">🚪 退出家庭</string>
+    <string name="iot_family_leave_message">确定要退出当前家庭吗？退出后您将不再是该家庭的成员。</string>
+    <string name="iot_family_leave_success">已退出家庭</string>
+    <string name="iot_family_leave_failed">退出失败：%s</string>
+
+    <string name="iot_member_invite_token_title">家庭邀请码</string>
+    <string name="iot_member_invite_token_message">邀请码：%s\n\n请将此邀请码发送给对方，对方可通过「加入家庭」功能输入邀请码加入</string>
+    <string name="iot_member_invite_token_failed">生成邀请码失败：%s</string>
+    <string name="iot_member_join_family_item">🔗 通过邀请码加入家庭</string>
+    <string name="iot_member_join_family_title">🔗 加入家庭</string>
+    <string name="iot_member_join_family_hint">请输入邀请码</string>
+    <string name="iot_member_join_family_success">已成功加入家庭</string>
+    <string name="iot_member_join_family_failed">加入失败：%s</string>
+    <string name="iot_btn_copy">📋 复制</string>
+
+    <!-- DeviceListActivity - 设备分享 -->
+    <string name="iot_share_manage_title">📲 设备分享</string>
+    <string name="iot_share_menu_create_token">🔑 生成分享码</string>
+    <string name="iot_share_menu_shared_to_me">📥 查看分享给我的设备</string>
+    <string name="iot_share_menu_shared_users">👥 查看已分享用户</string>
+    <string name="iot_share_menu_revoke">🗑️ 撤销分享</string>
+    <string name="iot_share_token_title">设备分享码</string>
+    <string name="iot_share_token_message">分享码：%s\n\n请将此分享码发送给对方，对方可通过「绑定分享设备」功能添加此设备</string>
+    <string name="iot_share_token_failed">生成分享码失败：%s</string>
+    <string name="iot_share_bind_title">🔗 绑定分享设备</string>
+    <string name="iot_share_bind_hint">请输入设备分享码</string>
+    <string name="iot_share_bind_token_hint">请输入分享 Token</string>
+    <string name="iot_share_bind_to_family">绑定到家庭</string>
+    <string name="iot_share_bind_success">分享设备绑定成功</string>
+    <string name="iot_share_bind_failed">绑定失败：%s</string>
+    <string name="iot_share_devices_title">📥 分享给我的设备</string>
+    <string name="iot_share_devices_empty">暂无分享给我的设备</string>
+    <string name="iot_share_devices_failed">获取失败：%s</string>
+    <string name="iot_share_unbind_title">解除绑定</string>
+    <string name="iot_share_unbind_message">确定要解除绑定该设备吗？解除后将不再出现在分享给我的列表中。</string>
+    <string name="iot_share_unbind_success">已解除绑定</string>
+    <string name="iot_share_unbind_failed">解除绑定失败：%s</string>
+    <string name="iot_share_users_title">👥 已分享用户</string>
+    <string name="iot_share_users_empty">暂无分享用户</string>
+    <string name="iot_share_users_failed">获取失败：%s</string>
+    <string name="iot_share_remove_user_title">🗑️ 移除分享</string>
+    <string name="iot_share_remove_user_message">确定要移除用户「%s」的设备访问权限吗？</string>
+    <string name="iot_share_remove_user_success">已移除该用户的分享权限</string>
+    <string name="iot_share_remove_user_failed">移除失败：%s</string>
+
+    <!-- DeviceListActivity - 房间设备绑定 -->
+    <string name="iot_room_bind_device_title">将设备移入房间</string>
+    <string name="iot_room_unbind_device_title">从房间移出设备</string>
+    <string name="iot_room_bind_device_success">设备已移入房间</string>
+    <string name="iot_room_bind_device_failed">移入失败：%s</string>
+    <string name="iot_room_unbind_device_success">设备已从房间移出</string>
+    <string name="iot_room_unbind_device_failed">移出失败：%s</string>
+    <string name="iot_room_menu_bind_device">将设备移入此房间</string>
+    <string name="iot_room_menu_unbind_device">从房间移出设备</string>
+    <string name="iot_room_no_device">暂无设备</string>
+
+    <!-- DeviceListActivity - 设备改名 -->
+    <string name="iot_device_rename_title">✏️ 设备改名</string>
+    <string name="iot_device_rename_hint">请输入设备名称</string>
+    <string name="iot_device_rename_success">设备名称已更新</string>
+    <string name="iot_device_rename_failed">改名失败：%s</string>
+
+    <!-- DeviceListActivity - 修改设备别名 -->
+    <string name="iot_device_modify_alias_title">修改别名</string>
+    <string name="iot_device_modify_alias_hint">请输入设备别名</string>
+    <string name="iot_device_modify_alias_success">别名已修改</string>
+    <string name="iot_device_modify_alias_failed">修改别名失败：%s</string>
+
+    <!-- DeviceListActivity - 通道选择 -->
+    <string name="iot_channel_select_at_least_one">请至少选择一个通道</string>
+    <string name="iot_input_empty_error">名称不能为空</string>
+
+    <!-- 通道选择 -->
+    <string name="iot_channel_select_title">选择视频通道</string>
+    <string name="iot_channel_0">通道0</string>
+    <string name="iot_channel_1">通道1</string>
+    <string name="iot_channel_2">通道2</string>
+    <string name="iot_channel_3">通道3</string>
+    <string name="iot_channel_select_device_info">设备：%1$s/%2$s</string>
+
+    <!-- LoginActivity -->
+    <string name="iot_login_input_userid">请输入UserId</string>
+    <string name="iot_login_input_appkey">请输入AppKey</string>
+    <string name="iot_login_input_appsecret">请输入AppSecret</string>
+    <string name="iot_login_btn_text">登 录</string>
+
+    <!-- AddDeviceActivity -->
+    <string name="iot_add_device_scan_qr_first">请扫描二维码</string>
+    <string name="iot_add_device_select_family_first">请先选择家庭</string>
+    <string name="iot_add_device_get_family_mgr_failed">获取家庭管理器失败</string>
+    <string name="iot_add_device_no_family_hint">暂无家庭，请先在设备列表创建</string>
+    <string name="iot_add_device_loading">正在添加设备…</string>
+    <string name="iot_add_device_get_dev_mgr_failed">获取设备管理器失败，请重试</string>
+    <string name="iot_add_device_bind_success">绑定到[%s]成功</string>
+    <string name="iot_add_device_camera_perm_required">需要相机权限才能扫描二维码</string>
+    <string name="iot_add_device_qr_scan_success">二维码扫描成功</string>
+    <string name="iot_add_device_qr_scan_failed">二维码扫描失败</string>
+    <string name="iot_add_device_btn_adding">添加中…</string>
+    <string name="iot_add_device_btn_add">添加设备</string>
+
+    <!-- DebugSettingsActivity -->
+    <string name="iot_debug_codec_default">默认</string>
+    <string name="iot_debug_codec_g722">G722</string>
+    <string name="iot_debug_env_prod">生产</string>
+    <string name="iot_debug_env_test">测试</string>
+    <string name="iot_debug_codec_title">编码格式设置</string>
+    <string name="iot_debug_env_title">服务器环境</string>
+    <string name="iot_debug_settings_saved">设置已保存</string>
+
+    <!-- DeviceDetailActivity -->
+    <string name="iot_detail_multi_channel">多通道(%d个)</string>
+    <string name="iot_detail_single_channel">单通道</string>
+    <string name="iot_detail_connected">连接成功</string>
+    <string name="iot_detail_reconnecting">重连中…</string>
+    <string name="iot_detail_channel_snapshot_failed">通道%d 截图失败</string>
+    <string name="iot_detail_channel_snapshot_saved">通道%d 截图已保存到相册</string>
+    <string name="iot_detail_channel_snapshot_save_failed">通道%d 截图成功（保存相册失败）</string>
+    <string name="iot_detail_channel_record_start_failed">通道%d 录像启动失败</string>
+    <string name="iot_detail_channel_record_started">通道%d 录像开始</string>
+    <string name="iot_detail_channel_record_saved">通道%d 录像已保存到相册</string>
+    <string name="iot_detail_channel_record_failed">通道%d 录像失败</string>
+    <string name="iot_detail_device_voip_mode">设备已切换为通话模式，停止拉流</string>
+    <string name="iot_detail_stream_failed">拉流失败：%s</string>
+    <string name="iot_detail_recording_active">录像中</string>
+    <string name="iot_detail_recording_idle">录像</string>
+    <string name="iot_detail_quality_hd">高清</string>
+    <string name="iot_detail_quality_sd">标清</string>
+    <string name="iot_detail_muted">已静音</string>
+    <string name="iot_detail_unmuted">已开声音</string>
+    <string name="iot_detail_switched_hd">已切换为高清</string>
+    <string name="iot_detail_switched_sd">已切换为标清</string>
+    <string name="iot_detail_talk_on">对讲已开启</string>
+    <string name="iot_detail_talk_off">对讲已关闭</string>
+    <string name="iot_detail_talk_active">对讲中</string>
+    <string name="iot_detail_talk_idle">对讲</string>
+    <string name="iot_detail_device_info_incomplete">设备信息不完整</string>
+    <string name="iot_detail_dev_mgr_unavailable">设备管理器不可用</string>
+    <string name="iot_detail_share_token_failed">生成分享码失败：%s</string>
+    <string name="iot_detail_share_token_title">设备分享码</string>
+    <string name="iot_detail_copy_share_token">复制分享码</string>
+    <string name="iot_detail_share_token_copied">分享码已复制</string>
+    <string name="iot_detail_command_sent">指令发送成功</string>
+    <string name="iot_detail_command_send_failed">指令发送失败：%s</string>
+    <string name="iot_detail_mic_perm_denied">获取权限失败！无法使用对讲功能</string>
+    <string name="iot_detail_connection_recovered">已恢复连接</string>
+
+    <!-- DeviceListActivity -->
+    <string name="iot_login_expired">登录已过期，请重新登录</string>
+
+    <!-- FamilyManageActivity -->
+    <string name="iot_family_member_id_label">ID: %s</string>
+    <string name="iot_family_room_device_count">%d 台设备</string>
+    <string name="iot_family_shared_user_count">%d 位用户</string>
+    <string name="iot_family_create_share">创建分享</string>
+    <string name="iot_family_shared_users">已分享用户</string>
+    <string name="iot_family_default_user">用户</string>
+    <string name="iot_family_remove_btn_short">移出</string>
+    <string name="iot_family_product_id_label">ProductId: %s</string>
+    <string name="iot_family_share_token_title">🔑 设备分享码</string>
+    <string name="iot_family_share_token_copied">📋 分享码已复制</string>
+    <string name="iot_family_copy_share_token">📋 复制分享码</string>
+    <string name="iot_family_share_code_format_error">分享码格式错误，请粘贴完整的分享码</string>
+    <string name="iot_family_share_code_incomplete">分享码内容不完整，请检查后重试</string>
+    <string name="iot_family_invite_code_copied">邀请码已复制</string>
+
+    <!-- IoTCallActivity -->
+    <string name="iot_call_default_device">设备</string>
+    <string name="iot_call_device_info_missing">设备信息缺失，无法发起通话</string>
+    <string name="iot_call_get_session_failed">获取通话会话失败</string>
+    <string name="iot_call_inviting">邀请你通话…</string>
+    <string name="iot_call_waiting_accept">等待对方接受邀请.</string>
+    <string name="iot_call_connecting">正在连接…</string>
+    <string name="iot_call_mic_off">麦克风已关</string>
+    <string name="iot_call_mic_on">麦克风已开</string>
+    <string name="iot_call_speaker_on">扬声器已开</string>
+    <string name="iot_call_speaker_off">扬声器已关</string>
+    <string name="iot_call_camera_off">摄像头已关</string>
+    <string name="iot_call_camera_on">摄像头已开</string>
+    <string name="iot_call_error">错误(%1$s): %2$s</string>
+    <string name="iot_call_rejected">通话被拒绝</string>
+    <string name="iot_call_no_response">对方未响应</string>
+    <string name="iot_call_busy">对方忙线</string>
+    <string name="iot_call_device_offline">设备未在线</string>
+    <string name="iot_call_in_progress">通话中</string>
+    <string name="iot_call_reason_local_hangup">已挂断</string>
+    <string name="iot_call_reason_remote_hangup">对方已挂断</string>
+    <string name="iot_call_reason_network_error">网络异常</string>
+    <string name="iot_call_reason_permission_denied">无通话权限</string>
+    <string name="iot_call_reason_unknown">通话已结束</string>
+
+    <!-- MessageActivity / MessageCenterFragment / MessageListFragment -->
+    <string name="iot_message_unknown_device">未知设备</string>
+    <string name="iot_message_device_status_changed">设备状态变化</string>
+    <string name="iot_message_device_status_content">设备 %s 状态已更新</string>
+    <string name="iot_message_push_notification">推送通知</string>
+    <string name="iot_message_push_content">设备 %s 收到一条推送消息</string>
+    <string name="iot_message_tab_message">🔔 消息</string>
+    <string name="iot_message_tab_push">🔔 推送通知</string>
+    <string name="iot_message_all_marked_read">已全部标记为已读</string>
+    <string name="iot_message_tab_device">📱 设备消息</string>
+    <string name="iot_message_tab_family">🏠 家庭消息</string>
+    <string name="iot_message_tab_notification">🔔 通知消息</string>
+    <string name="iot_message_all_loaded">已加载全部消息</string>
+
+    <!-- PersonalInfoActivity -->
+    <string name="iot_personal_not_logged_in">用户未登录</string>
+
+    <!-- MultiChannelAdapter -->
+    <string name="iot_channel_label">通道 %d</string>
+
+    <!-- IncomingCallManager -->
+    <string name="iot_incoming_video_call">邀请你视频通话…</string>
+    <string name="iot_incoming_audio_call">邀请你语音通话…</string>
+
+    <!-- Layout hardcoded strings -->
+    <string name="iot_add_device_scan_qr">扫描二维码</string>
+    <string name="iot_add_device_scan_qr_title">扫描设备二维码</string>
+    <string name="iot_add_device_or_manual_input">或手动输入</string>
+    <string name="iot_add_device_bind_family">🏠 绑定家庭</string>
+    <string name="iot_add_device_select_family_hint">请选择家庭</string>
+    <string name="iot_switch">切换</string>
+    <string name="iot_signature">签名</string>
+    <string name="iot_signature_hint">请输入签名</string>
+    <string name="iot_detail_stream_retry">拉流失败，点击重试</string>
+    <string name="iot_detail_sound">声音</string>
+    <string name="iot_detail_fullscreen">全屏</string>
+    <string name="iot_detail_snapshot">截图</string>
+    <string name="iot_ptz_up">向上</string>
+    <string name="iot_ptz_down">向下</string>
+    <string name="iot_ptz_left">向左</string>
+    <string name="iot_ptz_right">向右</string>
+    <string name="iot_ptz_reset">复位</string>
+    <string name="iot_share">分享</string>
+    <string name="iot_my_devices">我的设备</string>
+    <string name="iot_message_center">消息中心</string>
+    <string name="iot_user_info">用户信息</string>
+    <string name="iot_family_icon">家庭图标</string>
+    <string name="iot_my_home">我的家</string>
+    <string name="iot_manage">管理</string>
+    <string name="iot_device_list_empty_hint">点击下方按钮添加您的第一台设备</string>
+    <string name="iot_loading">加载中...</string>
+    <string name="iot_more_actions">更多操作</string>
+    <string name="iot_member_management">成员管理</string>
+    <string name="iot_device_list">设备列表</string>
+    <string name="iot_shared_to_me">分享给我</string>
+    <string name="iot_call_answer">接听</string>
+    <string name="iot_device_name_placeholder">智能摄像头</string>
+    <string name="iot_login_slogan">安全守护，智能生活</string>
+    <string name="iot_login_title">👤 账号登录</string>
+    <string name="iot_login_subtitle">请填写以下信息完成登录</string>
+    <string name="iot_login_userid_hint">请输入 UserId</string>
+    <string name="iot_login_appkey_hint">请输入 AppKey</string>
+    <string name="iot_login_appsecret_hint">请输入 AppSecret</string>
+    <string name="iot_message_read">已读</string>
+    <string name="iot_personal_info_title">个人信息</string>
+    <string name="iot_account_info">账号信息</string>
+    <string name="iot_user_id_label">用户ID</string>
+    <string name="iot_video_call">视频通话</string>
+    <string name="iot_video_call_desc">拨打视频电话给设备</string>
+    <string name="iot_audio_call">语音通话</string>
+    <string name="iot_audio_call_desc">拨打语音电话给设备</string>
+    <string name="iot_device_share_title">设备分享</string>
+    <string name="iot_add_new">➕ 新增</string>
+    <string name="iot_share_device_menu">📲 分享设备</string>
+    <string name="iot_share_target_user_label">👤 目标用户 ID</string>
+    <string name="iot_share_target_user_hint">请输入目标用户 ID</string>
+    <string name="iot_share_now">📲 立即分享</string>
+    <string name="iot_close">关闭</string>
+    <string name="iot_message_empty">暂无消息</string>
+    <string name="iot_message_empty_hint">当前分类下没有消息记录</string>
+    <string name="iot_load_more">⏳ 加载更多</string>
+    <string name="iot_me">我</string>
+    <string name="iot_exit">退出</string>
+    <string name="iot_message_icon">消息图标</string>
+    <string name="iot_message_title_placeholder">消息标题</string>
+    <string name="iot_message_content_placeholder">消息内容描述</string>
+    <string name="iot_remove">移除</string>
+    <string name="iot_create_invite">创建邀请</string>
+    <string name="iot_join_family">加入家庭</string>
+    <string name="iot_room_empty">暂无房间</string>
+    <string name="iot_share_create">📲 创建分享</string>
+    <string name="iot_share_bind_action">🔗 绑定分享</string>
+    <string name="iot_shared_to_me_devices">📲 分享给我的设备</string>
+    <string name="iot_my_shared_devices">📲 我分享出去的设备</string>
+    <string name="iot_device_no_shared_users">该设备暂无分享用户</string>
+    <string name="iot_menu_call">📞 通话</string>
+    <string name="iot_menu_unbind_device">🗑️ 解绑设备</string>
+    <string name="iot_menu_share">📲 分享</string>
+    <string name="iot_share_device">分享设备</string>
+    <string name="iot_unbind_device">解绑设备</string>
+</resources>

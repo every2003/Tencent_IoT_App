@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/iot_action_call"
+        android:title="@string/iot_menu_call"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/iot_action_delete"
+        android:title="@string/iot_menu_unbind_device"
+        android:icon="@drawable/iot_ic_delete"
+        app:showAsAction="ifRoom"
+        android:width="120dp"
+        android:maxWidth="200dp" />
+
+    <item
+        android:id="@+id/iot_action_share"
+        android:title="@string/iot_menu_share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/iot_action_modify_alias"
+        android:title="@string/iot_device_modify_alias_title"
+        app:showAsAction="never" />
+</menu>

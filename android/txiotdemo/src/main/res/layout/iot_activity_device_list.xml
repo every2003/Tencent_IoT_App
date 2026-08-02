@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F4F8"
+    android:orientation="vertical"
+    tools:context=".activity.DeviceListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/iot_bg_device_list_header"
+        android:orientation="vertical"
+        android:paddingTop="36dp"
+        android:paddingBottom="20dp"
+        android:paddingHorizontal="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/iot_my_devices"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/iot_btn_message"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/iot_bg_manage_btn"
+                android:contentDescription="@string/iot_message_center"
+                android:padding="10dp"
+                android:src="@drawable/iot_ic_bell"
+                android:tint="#006EFF" />
+
+            <ImageButton
+                android:id="@+id/iot_btn_add_device"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/iot_bg_manage_btn"
+                android:contentDescription="@string/iot_add_device_btn_add"
+                android:padding="10dp"
+                android:src="@drawable/iot_ic_add"
+                android:tint="#006EFF" />
+
+            <ImageButton
+                android:id="@+id/iot_btn_user_profile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/iot_bg_manage_btn"
+                android:contentDescription="@string/iot_user_info"
+                android:padding="10dp"
+                android:src="@drawable/iot_ic_user"
+                android:tint="#006EFF" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/iot_family_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/iot_bg_family_capsule"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/iot_ll_family_name_click"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="10dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/iot_ic_home"
+                    android:tint="#FFFFFF"
+                    android:contentDescription="@string/iot_family_icon" />
+
+                <TextView
+                    android:id="@+id/iot_tv_family_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:maxWidth="160dp"
+                    android:text="@string/iot_my_home"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="18dp"
+                android:background="#C9FFFFFF" />
+
+            <TextView
+                android:id="@+id/iot_tv_family_manage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                android:paddingEnd="14dp"
+                android:text="@string/iot_manage"
+                android:textColor="#CCFFFFFF"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/iot_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/iot_rv_device_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:clipToPadding="false"
+                tools:listitem="@layout/iot_item_device_card" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/iot_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp">
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/iot_bg_device_icon_new" />
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/iot_room_no_device"
+                    android:src="@drawable/iot_ic_video_slash"
+                    android:tint="#006EFF" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/iot_room_no_device"
+                android:textColor="#15161A"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/iot_device_list_empty_hint"
+                android:textColor="#9DA3B0"
+                android:textSize="13sp" />
+
+            <Button
+                android:id="@+id/iot_btn_add_device_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="28dp"
+                android:stateListAnimator="@null"
+                android:background="@drawable/iot_bg_primary_button"
+                android:paddingHorizontal="40dp"
+                android:text="@string/iot_add_device_btn_add"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

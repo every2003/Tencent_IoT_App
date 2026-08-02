@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "需要使用相机扫描二维码以添加设备";
+"NSMicrophoneUsageDescription" = "获取麦克风权限用于音视频通话";
+"NSPhotoLibraryAddUsageDescription" = "用于保存视频截图";

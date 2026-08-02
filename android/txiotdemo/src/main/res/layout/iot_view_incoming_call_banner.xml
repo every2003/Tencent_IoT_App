@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/iot_llIncomingCallBanner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/iot_bg_incoming_call_banner"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:elevation="8dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iot_ivIncomingAvatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/iot_bg_incoming_call_avatar"
+        android:padding="10dp"
+        android:src="@drawable/iot_ic_call_contact"
+        android:scaleType="centerInside"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/iot_tvIncomingName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="蜡笔小新520"
+            xmlns:tools="http://schemas.android.com/tools" />
+
+        <TextView
+            android:id="@+id/iot_tvIncomingSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#CCFFFFFF"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="邀请你视频通话..."
+            xmlns:tools="http://schemas.android.com/tools" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iot_btnIncomingReject"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/iot_bg_call_hangup_circle"
+        android:padding="10dp"
+        android:src="@drawable/iot_ic_call"
+        android:scaleType="centerInside"
+        android:contentDescription="@null" />
+
+    <ImageView
+        android:id="@+id/iot_btnIncomingAccept"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/iot_bg_call_accept_circle"
+        android:padding="10dp"
+        android:src="@drawable/iot_ic_call"
+        android:scaleType="centerInside"
+        android:contentDescription="@null" />
+</LinearLayout>

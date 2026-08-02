@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="32dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/iot_bg_device_chip"
+    android:clickable="true"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/iot_tvChipName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingHorizontal="14dp"
+        android:textColor="@color/iot_chip_text_color"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+</FrameLayout>

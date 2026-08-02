@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="38dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/iot_selector_popup_menu_item">
+
+    <TextView
+        android:id="@+id/iot_tvItemIcon"
+        android:layout_width="24dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="17sp" />
+
+    <View
+        android:id="@+id/iot_spacer"
+        android:layout_width="12dp"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/iot_tvItemName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"
+        android:textColor="#15161A"
+        android:textSize="15sp"
+        android:letterSpacing="0.005" />
+
+</LinearLayout>

@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+  <path
+      android:pathData="M489.6,489.8L198.4,489.8c-37.1,0 -67.2,-30.1 -67.2,-67.2v-224c0,-37.1 30.1,-67.2 67.2,-67.2h224c37.1,0 67.2,30.1 67.2,67.2v291.2zM220.8,400.2L400,400.2L400,221L220.8,221v179.2zM825.6,489.8L534.4,489.8L534.4,198.6c0,-37.1 30.1,-67.2 67.2,-67.2h224c37.1,0 67.2,30.1 67.2,67.2v224c0,37.1 -30.1,67.2 -67.2,67.2zM624,400.2h179.2L803.2,221L624,221v179.2zM422.4,893h-224c-37.1,0 -67.2,-30.1 -67.2,-67.2v-224c0,-37.1 30.1,-67.2 67.2,-67.2h291.2v291.2c0,37.1 -30.1,67.2 -67.2,67.2zM220.8,803.4L400,803.4L400,624.2L220.8,624.2v179.2zM534.4,534.6h134.4L668.8,669L534.4,669z"
+      android:fillColor="@color/iot_primary_color"/>
+  <path
+      android:pathData="M646.4,646.6h134.4V781H646.4z"
+      android:fillColor="@color/iot_primary_color"/>
+  <path
+      android:pathData="M758.4,534.6h134.4V669H758.4zM534.4,758.6h134.4V893H534.4zM758.4,758.6h134.4V893H758.4z"
+      android:fillColor="@color/iot_primary_color"/>
+</vector>

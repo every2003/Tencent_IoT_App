@@ -1,0 +1,29 @@
+package com.tencent.iot.txiotdemo.common.util
+
+import android.util.Base64
+import com.tencent.iot.txiotdemo.common.log.L
+import java.nio.charset.Charset
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+
+object SignatureUtil {
+
+    fun format(params: Map<String, Any>): String {
+        val sb = StringBuilder()
+        params.toSortedMap().forEach {
+            L.e("${it.key}=${it.value}")
+            sb.append(it.key).append("=").append(it.value).append("&")
+        }
+        return sb.substring(0, sb.lastIndex)
+    }
+
+    fun signature(sign: String, secret: String): String {
+        L.e("Signature source=$sign")
+        val secretKey = SecretKeySpec(secret.toByteArray(Charset.forName("utf-8")), "HmacSHA1")
+        val mac = Mac.getInstance("HmacSHA1")
+        mac.init(secretKey)
+        val result = mac.doFinal(sign.toByteArray(Charset.forName("utf-8")))
+        return Base64.encodeToString(result, Base64.DEFAULT).replace("\n", "")
+    }
+
+}

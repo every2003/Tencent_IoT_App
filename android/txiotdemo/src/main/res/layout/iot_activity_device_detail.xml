@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/iot_topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/iot_bg_toolbar_gradient"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="36dp" >
+
+        <ImageButton
+            android:id="@+id/iot_btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/iot_back"
+            android:src="@drawable/iot_icon_back"
+            android:tint="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/iot_tvDeviceName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="设备名称" />
+
+        <TextView
+            android:id="@+id/iot_tvChannelInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/iot_bg_family_capsule"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="@string/iot_detail_single_channel"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/iot_videoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:background="#000000">
+
+        <FrameLayout
+            android:id="@+id/iot_singleChannelLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/iot_channel_item_background"
+            android:visibility="gone">
+
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/iot_trtcRemoteCloudView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.tencent.rtmp.ui.TXCloudVideoView
+                android:id="@+id/iot_trtcLocalCloudView"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_gravity="start|bottom"
+                android:layout_margin="16dp"
+                android:visibility="gone" />
+
+            <FrameLayout
+                android:id="@+id/iot_loadingOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#80000000"
+                android:visibility="visible">
+
+                <ProgressBar
+                    android:id="@+id/iot_loadingProgressBar"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="#FFFFFF" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/iot_multiChannelRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/iot_multiStreamErrorOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DD000000"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/iot_tvStreamError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/iot_bg_retry_button"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="10dp"
+            android:text="@string/iot_detail_stream_retry"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/iot_tvRecordDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:layout_margin="10dp"
+            android:background="#CC000000"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="#FF4444"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/iot_btnSound"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/iot_control_button_background"
+                android:contentDescription="@string/iot_detail_sound"
+                android:src="@drawable/iot_ic_sound_on"
+                app:tint="@color/iot_white" />
+
+            <TextView
+                android:id="@+id/iot_btnQuality"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/iot_control_button_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/iot_detail_quality_hd"
+                android:textColor="@color/iot_white"
+                android:textSize="10sp" />
+
+            <ImageButton
+                android:id="@+id/iot_btnFullscreen"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="@drawable/iot_control_button_background"
+                android:contentDescription="@string/iot_detail_fullscreen"
+                android:src="@drawable/iot_ic_fullscreen"
+                app:tint="@color/iot_white" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/iot_linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/iot_bg_control_btn">
+
+                <ImageButton
+                    android:id="@+id/iot_btnTalk"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:contentDescription="@string/iot_detail_talk_idle"
+                    android:padding="12dp"
+                    android:src="@drawable/iot_ic_talk"
+                    android:tint="#006EFF" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/iot_tvTalkLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/iot_detail_talk_idle"
+                android:textColor="#9DA3B0"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/iot_bg_control_btn">
+
+                <ImageButton
+                    android:id="@+id/iot_btnSnapshot"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:contentDescription="@string/iot_detail_snapshot"
+                    android:padding="12dp"
+                    android:src="@drawable/iot_ic_snapshot"
+                    android:tint="#006EFF" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/iot_detail_snapshot"
+                android:textColor="#9DA3B0"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/iot_bg_control_btn">
+
+                <ImageButton
+                    android:id="@+id/iot_btnRecord"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:contentDescription="@string/iot_detail_recording_idle"
+                    android:padding="12dp"
+                    android:src="@drawable/iot_ic_record"
+                    android:tint="#006EFF" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/iot_tvRecordLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/iot_detail_recording_idle"
+                android:textColor="#9DA3B0"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/iot_ptzPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:background="@drawable/iot_ptz_control_disk"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/iot_btnPTZUp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/iot_ptz_button_background"
+                android:contentDescription="@string/iot_ptz_up"
+                android:src="@drawable/iot_ic_ptz_up"
+                app:tint="@color/iot_primaryColor" />
+
+            <ImageButton
+                android:id="@+id/iot_btnPTZDown"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/iot_ptz_button_background"
+                android:contentDescription="@string/iot_ptz_down"
+                android:src="@drawable/iot_ic_ptz_down"
+                app:tint="@color/iot_primaryColor" />
+
+            <ImageButton
+                android:id="@+id/iot_btnPTZLeft"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/iot_ptz_button_background"
+                android:contentDescription="@string/iot_ptz_left"
+                android:src="@drawable/iot_ic_ptz_left"
+                app:tint="@color/iot_primaryColor" />
+
+            <ImageButton
+                android:id="@+id/iot_btnPTZRight"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/iot_ptz_button_background"
+                android:contentDescription="@string/iot_ptz_right"
+                android:src="@drawable/iot_ic_ptz_right"
+                app:tint="@color/iot_primaryColor" />
+
+            <ImageButton
+                android:id="@+id/iot_btnPTZCenter"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/iot_ptz_center_button_background"
+                android:contentDescription="@string/iot_ptz_reset"
+                app:tint="@color/iot_white" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/iot_actionButtonsRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="22dp">
+
+        <LinearLayout
+            android:id="@+id/iot_btnShareDevice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/iot_bg_control_btn"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/iot_ic_share"
+                android:drawablePadding="8dp"
+                android:drawableTint="#006EFF"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp"
+                android:text="@string/iot_share"
+                android:textColor="#006EFF"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

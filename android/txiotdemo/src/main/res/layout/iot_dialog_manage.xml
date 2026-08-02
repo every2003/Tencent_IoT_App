@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/iot_bg_bottom_sheet"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:background="#E0E4EC" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="14dp">
+
+        <TextView
+            android:id="@+id/iot_tvManageTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/iot_manage"
+            android:textColor="#15161A"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.01" />
+
+        <TextView
+            android:id="@+id/iot_tvManageSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="#9DA3B0"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/iot_tabManage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/iot_bg_tab_manage"
+        android:padding="4dp"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="#1A1D26"
+        app:tabTextColor="#9DA3B0"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabIndicatorHeight="0dp"
+        app:tabRippleColor="#0A006EFF"
+        app:tabUnboundedRipple="false"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabTextAppearance="@style/iot_ManageTabTextAppearance" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/iot_tabFamilySub"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/transparent"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="#006EFF"
+        app:tabTextColor="#B0B6C3"
+        app:tabIndicatorColor="#006EFF"
+        app:tabIndicatorHeight="2.5dp"
+        app:tabIndicatorGravity="bottom"
+        app:tabRippleColor="#0A006EFF"
+        app:tabUnboundedRipple="false"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabTextAppearance="@style/iot_SubTabTextAppearance"
+        android:visibility="visible" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/iot_tabDeviceSub"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/transparent"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="#006EFF"
+        app:tabTextColor="#B0B6C3"
+        app:tabIndicatorColor="#006EFF"
+        app:tabIndicatorHeight="2.5dp"
+        app:tabIndicatorGravity="bottom"
+        app:tabRippleColor="#0A006EFF"
+        app:tabUnboundedRipple="false"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabTextAppearance="@style/iot_SubTabTextAppearance"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="#ECEEF2" />
+
+    <LinearLayout
+        android:id="@+id/iot_llAddRow"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/iot_bg_menu_item_ripple">
+
+        <TextView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:gravity="center"
+            android:text="＋"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:background="@drawable/iot_bg_add_btn_circle" />
+
+        <TextView
+            android:id="@+id/iot_tvAddLabel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="14dp"
+            android:text="@string/iot_add_new"
+            android:textColor="#006EFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="#ECEEF2" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/iot_scrollManage"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:id="@+id/iot_llManageItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/iot_btnManageCancel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/iot_bg_cancel_button"
+        android:gravity="center"
+        android:text="@string/iot_btn_cancel"
+        android:textColor="#6B7280"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
