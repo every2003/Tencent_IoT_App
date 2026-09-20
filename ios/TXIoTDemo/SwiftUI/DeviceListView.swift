@@ -1,5 +1,5 @@
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 struct DeviceListView: View {
     @EnvironmentObject var userManager: UserManager
@@ -123,12 +123,12 @@ struct DeviceListView: View {
         HStack(alignment: .top, spacing: 0) {
             headerLeftSection
             Spacer()
-            headerRightButtons
-                .offset(y: -4)
+            headerRightButtons.offset(y: -4)
         }
         .padding(.horizontal, 20)
-        .frame(height: 120)
-        .background(Color.headerGradient)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
+        .background(Color.headerGradient.ignoresSafeArea(edges: .top))
         .onAppear { syncFamilyName() }
     }
 
@@ -344,7 +344,8 @@ struct DeviceListView: View {
                     onAudioCall: {
                         callManager.startCall(peerName: $0.name, mode: .audio, deviceId: $0.id)
                     },
-                    onTapAction: { showChannelSelector(for: $0) },
+                    onTapAction: { handleDeviceTap($0) },
+                    onCloudStorageAction: { showCloudStorage(for: $0) },
                     onRenameAction: { showRenameDialog(for: $0) },
                     onShareAction: { createShareToken(for: $0) }
                 )
@@ -426,6 +427,23 @@ struct DeviceListView: View {
         deviceToDelete = device
     }
 
+    private func handleDeviceTap(_ device: Device) {
+        if device.isCeilingLamp {
+            navigateToLampDetail(device: device)
+        } else {
+            showChannelSelector(for: device)
+        }
+    }
+
+    private func navigateToLampDetail(device: Device) {
+        guard let navigationController = SwiftUIHelper.navigationController else {
+            print("Unable to get navigationController, navigation failed")
+            return
+        }
+        let lampVC = SwiftUIHelper.createLampDetailViewController(device: device)
+        navigationController.pushViewController(lampVC, animated: true)
+    }
+
     // 直接显示通道选择框（固定使用TRTC方式）
     // 通过设置 selectedDevice 驱动 sheet(item:) 弹出
     private func showChannelSelector(for device: Device) {
@@ -463,6 +481,15 @@ struct DeviceListView: View {
         }
     }
 
+    // 显示云存回看页面（以独立窗口形式展示，与通话页一致）
+    private func showCloudStorage(for device: Device) {
+        print(
+            "Open cloud playback, device: \(device.name) productId=\(device.productId) deviceName=\(device.deviceName)"
+        )
+        CloudStorageWindowController.shared.present(device: device, channelId: 0)
+    }
+
+    // 创建设备分享码（对齐 Android createDeviceSharingToken）
     private func createShareToken(for device: Device) {
         guard let deviceManager = TXIoTEngine.getInstance().getDeviceManager() else {
             showToast(L("Failed to get DeviceManager"))
@@ -799,6 +826,7 @@ struct DeviceCardView: View {
     var onVideoCall: ((Device) -> Void)? = nil  // 视频通话
     var onAudioCall: ((Device) -> Void)? = nil  // 语音通话
     var onTapAction: (Device) -> Void
+    var onCloudStorageAction: ((Device) -> Void)? = nil
     var onRenameAction: ((Device) -> Void)? = nil
     var onShareAction: ((Device) -> Void)? = nil
 
@@ -843,7 +871,7 @@ struct DeviceCardView: View {
     // MARK: - HStack 子视图提取
 
     private var deviceIconView: some View {
-        DeviceIconView()
+        DeviceIconView(iconName: device.isCeilingLamp ? "lightbulb.fill" : "video.fill")
     }
 
     private var deviceNameStatusView: some View {
@@ -864,9 +892,15 @@ struct DeviceCardView: View {
 
     private var deviceMenuView: some View {
         Menu {
-            menuButtonItem(L("Video Call"), icon: "video.fill") { onVideoCall?(device) }
-            menuButtonItem(L("Voice Call"), icon: "phone.fill") { onAudioCall?(device) }
+            // 通话/云存能力仅摄像头类设备具备，吸顶灯隐藏
+            if !device.isCeilingLamp {
+                menuButtonItem(L("Video Call"), icon: "video.fill") { onVideoCall?(device) }
+                menuButtonItem(L("Voice Call"), icon: "phone.fill") { onAudioCall?(device) }
+            }
             menuButtonItem(L("Edit Alias"), icon: "pencil") { onRenameAction?(device) }
+            if !device.isCeilingLamp {
+                menuButtonItem(L("Cloud Playback"), icon: "icloud.fill") { onCloudStorageAction?(device) }
+            }
             menuButtonItem(L("Share Device"), icon: "square.and.arrow.up") { onShareAction?(device) }
             Divider()
             Button(role: .destructive) {

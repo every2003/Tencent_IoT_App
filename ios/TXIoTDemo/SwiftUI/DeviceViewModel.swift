@@ -41,70 +41,82 @@ import SwiftUI
     /// 第一步：获取家庭列表，填充 cachedFamilyList，再加载设备
     private func getFamilyList() {
         DeviceAPIBridge.getFamilyList { [weak self] success, familyList, errorMsg in
-            guard let self = self else { return }
-            if success, let familyList = familyList, !familyList.isEmpty {
-                if let firstFamily = familyList.first,
-                    let familyId = firstFamily["FamilyId"] as? String
-                {
-                    print("Got family list, \(familyList.count) families")
+            // SDK 保证回调在主线程执行
+            nonisolated(unsafe) let familyList = familyList
+            MainActor.assumeIsolated {
+                self?.handleFamilyList(success: success, familyList: familyList)
+            }
+        }
+    }
 
-                    // 缓存家庭列表，供选择家庭弹窗直接复用，不再发起额外请求
-                    self.cachedFamilyList = familyList.compactMap { dict in
-                        var result: [String: Any] = [:]
-                        for (key, value) in dict {
-                            if let strKey = key as? String { result[strKey] = value }
-                        }
-                        return result.isEmpty ? nil : result
-                    }
+    /// 处理家庭列表结果：成功则缓存列表并加载设备，失败或无家庭则创建家庭
+    private func handleFamilyList(success: Bool, familyList: [[AnyHashable: Any]]?) {
+        guard success, let familyList = familyList, !familyList.isEmpty else {
+            // 没有家庭，创建一个
+            print("No family found, creating one...")
+            createFamily()
+            return
+        }
+        guard let firstFamily = familyList.first,
+            let familyId = firstFamily["FamilyId"] as? String
+        else {
+            isLoading = false
+            errorMessage = L("Invalid family data format")
+            print("Invalid family data format")
+            return
+        }
+        print("Got family list, \(familyList.count) families")
 
-                    // 确定当前家庭：优先沿用已选中的家庭，否则默认取第一个
-                    let activeFamilyId: String
-                    if let existing = DeviceAPIBridge.currentFamilyId, !existing.isEmpty,
-                        familyList.contains(where: { ($0["FamilyId"] as? String) == existing })
-                    {
-                        activeFamilyId = existing
-                    } else {
-                        activeFamilyId = familyId
-                        DeviceAPIBridge.currentFamilyId = familyId
-                        UserDefaults.standard.set(familyId, forKey: "firstFamilyId")
-                    }
+        // 缓存家庭列表，供选择家庭弹窗直接复用，不再发起额外请求
+        cachedFamilyList = familyList.compactMap { dict in
+            var result: [String: Any] = [:]
+            for (key, value) in dict {
+                if let strKey = key as? String { result[strKey] = value }
+            }
+            return result.isEmpty ? nil : result
+        }
 
-                    // 同步家庭名称
-                    if let activeFamily = familyList.first(where: {
-                        ($0["FamilyId"] as? String) == activeFamilyId
-                    }),
-                        let activeName = activeFamily["Name"] as? String, !activeName.isEmpty
-                    {
-                        self.currentFamilyName = activeName
-                        UserDefaults.standard.set(activeName, forKey: "currentFamilyName")
-                    } else if let firstName = firstFamily["Name"] as? String, !firstName.isEmpty {
-                        if self.currentFamilyName.isEmpty {
-                            self.currentFamilyName = firstName
-                        }
-                    }
+        // 确定当前家庭：优先沿用已选中的家庭，否则默认取第一个
+        let activeFamilyId: String
+        if let existing = DeviceAPIBridge.currentFamilyId, !existing.isEmpty,
+            familyList.contains(where: { ($0["FamilyId"] as? String) == existing })
+        {
+            activeFamilyId = existing
+        } else {
+            activeFamilyId = familyId
+            DeviceAPIBridge.currentFamilyId = familyId
+            UserDefaults.standard.set(familyId, forKey: "firstFamilyId")
+        }
 
-                    // 第二步：获取设备列表
-                    self.getDeviceList(familyId: activeFamilyId)
-                } else {
-                    self.isLoading = false
-                    self.errorMessage = L("Invalid family data format")
-                    print("Invalid family data format")
-                }
-            } else {
-                // 没有家庭，创建一个
-                print("No family found, creating one...")
-                self.createFamily()
+        syncFamilyName(familyList: familyList, activeFamilyId: activeFamilyId, firstFamily: firstFamily)
+
+        // 第二步：获取设备列表
+        getDeviceList(familyId: activeFamilyId)
+    }
+
+    /// 同步当前家庭名称：优先取当前家庭名称，其次首个家庭名称
+    private func syncFamilyName(familyList: [[AnyHashable: Any]], activeFamilyId: String, firstFamily: [AnyHashable: Any]) {
+        if let activeFamily = familyList.first(where: {
+            ($0["FamilyId"] as? String) == activeFamilyId
+        }),
+            let activeName = activeFamily["Name"] as? String, !activeName.isEmpty
+        {
+            currentFamilyName = activeName
+            UserDefaults.standard.set(activeName, forKey: "currentFamilyName")
+        } else if let firstName = firstFamily["Name"] as? String, !firstName.isEmpty {
+            if currentFamilyName.isEmpty {
+                currentFamilyName = firstName
             }
         }
     }
 
     /// 创建家庭（如果没有家庭）
     private func createFamily() {
-        let familyName = NSLocalizedString("my_family", comment: L("My Home"))
+        let familyName = L("My Home")
 
         DeviceAPIBridge.createFamily(withName: familyName, address: "") {
             [weak self] success, familyId, errorMsg in
-            // OC 层已通过 dispatch_async(main_queue) 保证回调在主线程执行
+            // SDK 保证回调在主线程执行
             MainActor.assumeIsolated {
                 guard let self = self else { return }
                 if success {
@@ -152,74 +164,144 @@ import SwiftUI
         // 第 1 步：获取自有设备列表
         DeviceAPIBridge.getDeviceList(withFamilyId: familyId, roomId: nil) {
             [weak self] ownedSuccess, ownedDeviceList, ownedErrorMsg in
-            guard let self = self else { return }
-            let ownedList: [DeviceInfoItem] = ownedDeviceList ?? []
-            let ownedError: String? = ownedSuccess ? nil : (ownedErrorMsg ?? L("Failed to get device list"))
-            if ownedSuccess {
-                print("Got owned device list, \(ownedList.count) devices")
-            } else {
-                print("Failed to get owned device list: \(ownedError ?? "")")
-            }
+            self?.handleOwnedDeviceList(
+                success: ownedSuccess,
+                deviceList: ownedDeviceList,
+                errorMsg: ownedErrorMsg,
+                familyId: familyId,
+                retryIfEmpty: retryIfEmpty,
+                completion: completion
+            )
+        }
+    }
 
-            // 第 2 步：自有设备请求回调后，再串行获取分享设备列表
-            DeviceAPIBridge.getSharedDeviceList(withFamilyId: familyId) {
-                [weak self] sharedSuccess, sharedDeviceList, sharedErrorMsg in
+    /// 自有设备列表回调（SDK 保证回调在主线程）：桥接进入 MainActor 后串行拉取分享设备
+    private nonisolated func handleOwnedDeviceList(
+        success: Bool,
+        deviceList: [DeviceInfoItem]?,
+        errorMsg: String?,
+        familyId: String,
+        retryIfEmpty: Bool,
+        completion: (@MainActor @Sendable () -> Void)?
+    ) {
+        MainActor.assumeIsolated {
+            getSharedDeviceList(
+                familyId: familyId,
+                ownedList: deviceList ?? [],
+                ownedError: success ? nil : (errorMsg ?? L("Failed to get device list")),
+                retryIfEmpty: retryIfEmpty,
+                completion: completion
+            )
+        }
+    }
+
+    /// 第 2 步：自有设备请求回调后，串行获取分享设备列表
+    private func getSharedDeviceList(
+        familyId: String,
+        ownedList: [DeviceInfoItem],
+        ownedError: String?,
+        retryIfEmpty: Bool,
+        completion: (@MainActor @Sendable () -> Void)?
+    ) {
+        if let ownedError = ownedError {
+            print("Failed to get owned device list: \(ownedError)")
+        } else {
+            print("Got owned device list, \(ownedList.count) devices")
+        }
+        DeviceAPIBridge.getSharedDeviceList(withFamilyId: familyId) {
+            [weak self] sharedSuccess, sharedDeviceList, sharedErrorMsg in
+            self?.handleSharedDeviceList(
+                success: sharedSuccess,
+                deviceList: sharedDeviceList,
+                errorMsg: sharedErrorMsg,
+                ownedList: ownedList,
+                ownedError: ownedError,
+                familyId: familyId,
+                retryIfEmpty: retryIfEmpty,
+                completion: completion
+            )
+        }
+    }
+
+    /// 分享设备列表回调（SDK 保证回调在主线程）：桥接进入 MainActor 后合并结果
+    private nonisolated func handleSharedDeviceList(
+        success: Bool,
+        deviceList: [DeviceInfoItem]?,
+        errorMsg: String?,
+        ownedList: [DeviceInfoItem],
+        ownedError: String?,
+        familyId: String,
+        retryIfEmpty: Bool,
+        completion: (@MainActor @Sendable () -> Void)?
+    ) {
+        MainActor.assumeIsolated {
+            handleMergedDeviceList(
+                ownedList: ownedList,
+                ownedError: ownedError,
+                sharedSuccess: success,
+                sharedList: deviceList ?? [],
+                sharedErrorMsg: errorMsg,
+                familyId: familyId,
+                retryIfEmpty: retryIfEmpty,
+                completion: completion
+            )
+        }
+    }
+
+    /// 合并自有/分享设备结果并更新状态；合并为空且允许重试时静默延迟重试一次
+    private func handleMergedDeviceList(
+        ownedList: [DeviceInfoItem],
+        ownedError: String?,
+        sharedSuccess: Bool,
+        sharedList: [DeviceInfoItem],
+        sharedErrorMsg: String?,
+        familyId: String,
+        retryIfEmpty: Bool,
+        completion: (@MainActor @Sendable () -> Void)?
+    ) {
+        if sharedSuccess {
+            print("Got shared device list, \(sharedList.count) devices")
+        } else {
+            print("Failed to get shared device list: \(sharedErrorMsg ?? "")")
+        }
+
+        isLoading = false
+
+        if ownedList.isEmpty && ownedError != nil && sharedList.isEmpty {
+            errorMessage = ownedError
+            devices = []
+            print("Failed to load device list: \(errorMessage ?? "")")
+            completion?()
+            return
+        }
+
+        // 合并自有设备和分享设备，去重（以 productId/deviceName 为唯一键）
+        var merged: [DeviceInfoItem] = ownedList
+        let ownedIds = Set(ownedList.map { "\($0.productId)/\($0.deviceName)" })
+        var newSharedKeys: Set<String> = []
+        for item in sharedList {
+            let key = "\(item.productId)/\(item.deviceName)"
+            newSharedKeys.insert(key)
+            if !ownedIds.contains(key) {
+                merged.append(item)
+            }
+        }
+        sharedDeviceKeys = newSharedKeys
+        parseDeviceList(merged)
+        print(
+            "Loaded \(devices.count) devices (owned: \(ownedList.count), shared: \(sharedList.count))"
+        )
+
+        // 绑定后立即查询偶发会遇到服务端索引延迟，合并结果为空则延迟重试一次
+        // 重试时同样不设 isLoading，静默重试，避免 UI 闪动
+        if retryIfEmpty && merged.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 guard let self = self else { return }
-                let sharedList: [DeviceInfoItem] = sharedDeviceList ?? []
-                if sharedSuccess {
-                    print("Got shared device list, \(sharedList.count) devices")
-                } else {
-                    print("Failed to get shared device list: \(sharedErrorMsg ?? "")")
-                }
-
-                // 合并结果（两个回调已串行，OC Bridge 层已保证回调在主线程）
-                self.isLoading = false
-
-                if ownedList.isEmpty && ownedError != nil && sharedList.isEmpty {
-                    self.errorMessage = ownedError
-                    self.devices = []
-                    print("Failed to load device list: \(self.errorMessage ?? "")")
-                    MainActor.assumeIsolated {
-                        completion?()
-                    }
-                    return
-                }
-
-                // 合并自有设备和分享设备，去重（以 productId/deviceName 为唯一键）
-                var merged: [DeviceInfoItem] = ownedList
-                let ownedIds = Set(ownedList.map { "\($0.productId)/\($0.deviceName)" })
-                var newSharedKeys: Set<String> = []
-                for item in sharedList {
-                    let key = "\(item.productId)/\(item.deviceName)"
-                    newSharedKeys.insert(key)
-                    if !ownedIds.contains(key) {
-                        merged.append(item)
-                    }
-                }
-                self.sharedDeviceKeys = newSharedKeys
-                self.parseDeviceList(merged)
-                print(
-                    "Loaded \(self.devices.count) devices (owned: \(ownedList.count), shared: \(sharedList.count))"
-                )
-
-                // 绑定后立即查询偶发会遇到服务端索引延迟，合并结果为空则延迟重试一次
-                // 重试时同样不设 isLoading，静默重试，避免 UI 闪动
-                if retryIfEmpty && merged.isEmpty {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                        guard let self = self else { return }
-                        self.getDeviceList(
-                            familyId: familyId,
-                            retryIfEmpty: false,
-                            completion: completion
-                        )
-                    }
-                } else {
-                    // 数据已到达（或不需要重试），通知调用方可以安全地 dismiss()
-                    MainActor.assumeIsolated {
-                        completion?()
-                    }
-                }
+                self.getDeviceList(familyId: familyId, retryIfEmpty: false, completion: completion)
             }
+        } else {
+            // 数据已到达（或不需要重试），通知调用方可以安全地 dismiss()
+            completion?()
         }
     }
 

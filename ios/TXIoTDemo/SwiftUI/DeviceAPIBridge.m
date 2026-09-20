@@ -17,7 +17,7 @@ static NSString *_currentFamilyId = nil;
 
 #pragma mark - 内部工具
 
-/// 构建一个仅包含 onError 的失败回调（统一错误处理：dispatch 到主线程）
+/// 构建一个仅包含 onError 的失败回调（SDK 保证回调在主线程，completion 直接同步调用）
 + (TXIoTVoidCallback *)voidCallbackWithCompletion:(SimpleCompletion)completion
                                        successLog:(NSString *)successLog
                                       failureHint:(NSString *)failureHint {
@@ -26,17 +26,13 @@ static NSString *_currentFamilyId = nil;
       if (successLog)
           NSLog(@"✅ %@", successLog);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, nil);
-          });
+          completion(YES, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: failureHint ?: NSLocalizedString(@"Operation Failed", nil);
       NSLog(@"%@: %@", failureHint ?: @"Operation failed", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, errorMsg);
-          });
+          completion(NO, errorMsg);
     };
     return cb;
 }
@@ -47,9 +43,7 @@ static NSString *_currentFamilyId = nil;
     TXIoTFamilyManager *familyManager = [[TXIoTEngine getInstance] getFamilyManager];
     if (!familyManager) {
         if (completion)
-            dispatch_async(dispatch_get_main_queue(), ^{
-              completion(NO, nil, NSLocalizedString(@"Not logged in", nil));
-            });
+            completion(NO, nil, NSLocalizedString(@"Not logged in", nil));
         return;
     }
 
@@ -67,15 +61,13 @@ static NSString *_currentFamilyId = nil;
             [familyList addObject:dict];
         }
         NSLog(@"Got family list, %lu families", (unsigned long)familyList.count);
-        if (completion) dispatch_async(dispatch_get_main_queue(), ^{ completion(YES, familyList, nil); });
+        if (completion) completion(YES, familyList, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to get family list", nil);
       NSLog(@"Failed to get family list: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, nil, errorMsg);
-          });
+          completion(NO, nil, errorMsg);
     };
     [familyManager getFamilyList:cb];
 }
@@ -86,9 +78,7 @@ static NSString *_currentFamilyId = nil;
     TXIoTFamilyManager *familyManager = [[TXIoTEngine getInstance] getFamilyManager];
     if (!familyManager) {
         if (completion)
-            dispatch_async(dispatch_get_main_queue(), ^{
-              completion(NO, nil, NSLocalizedString(@"Not logged in", nil));
-            });
+            completion(NO, nil, NSLocalizedString(@"Not logged in", nil));
         return;
     }
 
@@ -97,17 +87,13 @@ static NSString *_currentFamilyId = nil;
       NSString *familyId = result.familyId;
       NSLog(@"Family created: %@", familyId ?: @"");
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, familyId, nil);
-          });
+          completion(YES, familyId, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to create family", nil);
       NSLog(@"Failed to create family: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, nil, errorMsg);
-          });
+          completion(NO, nil, errorMsg);
     };
     [familyManager createFamily:familyName callback:cb];
 }
@@ -190,17 +176,13 @@ static NSString *_currentFamilyId = nil;
       }
       NSLog(@"Got room list, %lu rooms", (unsigned long)roomList.count);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, roomList, nil);
-          });
+          completion(YES, roomList, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to get room list", nil);
       NSLog(@"Failed to get room list: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, nil, errorMsg);
-          });
+          completion(NO, nil, errorMsg);
     };
     [familyManager getRoomList:familyId callback:cb];
 }
@@ -224,17 +206,13 @@ static NSString *_currentFamilyId = nil;
     cb.onSuccess = ^(TXIoTRoomInfo *_Nullable result) {
       NSLog(@"Room created: %@", result.name);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, nil);
-          });
+          completion(YES, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to create room", nil);
       NSLog(@"Failed to create room: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, errorMsg);
-          });
+          completion(NO, errorMsg);
     };
     [familyManager createRoom:familyId name:roomName callback:cb];
 }
@@ -382,17 +360,13 @@ static NSString *_currentFamilyId = nil;
     cb.onSuccess = ^(TXIoTDeviceInfo *_Nullable result) {
       NSLog(@"Device bound: %@", result.deviceId.deviceName ?: @"");
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, NSLocalizedString(@"Device added successfully!", nil));
-          });
+          completion(YES, NSLocalizedString(@"Device added successfully!", nil));
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = [errorMessage copy] ?: NSLocalizedString(@"Device binding failed. Please try again.", nil);
       NSLog(@"Failed to bind device: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, errorMsg);
-          });
+          completion(NO, errorMsg);
     };
     [deviceManager bindDevice:familyId deviceBindSignature:signature callback:cb];
 }
@@ -437,17 +411,13 @@ static NSString *_currentFamilyId = nil;
       }
       NSLog(@"Got device list, %lu devices", (unsigned long)deviceList.count);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, deviceList, nil);
-          });
+          completion(YES, deviceList, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to get device list", nil);
       NSLog(@"Failed to get device list: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, nil, errorMsg);
-          });
+          completion(NO, nil, errorMsg);
     };
     [deviceManager getDeviceList:familyId nextPageToken:nil callback:cb];
 }
@@ -489,17 +459,13 @@ static NSString *_currentFamilyId = nil;
       }
       NSLog(@"Got shared device list, %lu devices", (unsigned long)deviceList.count);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(YES, deviceList, nil);
-          });
+          completion(YES, deviceList, nil);
     };
     cb.onError = ^(TXIoTErrorCode errorCode, NSString *_Nullable errorMessage) {
       NSString *errorMsg = errorMessage ?: NSLocalizedString(@"Failed to get shared device list", nil);
       NSLog(@"Failed to get shared device list: %@", errorMsg);
       if (completion)
-          dispatch_async(dispatch_get_main_queue(), ^{
-            completion(NO, nil, errorMsg);
-          });
+          completion(NO, nil, errorMsg);
     };
     // 新接口的「分享给我的设备列表」不再以 familyId 为参数
     [deviceManager getDeviceListSharedWithMe:nil callback:cb];

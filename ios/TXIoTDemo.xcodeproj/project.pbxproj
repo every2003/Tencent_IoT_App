@@ -21,11 +21,8 @@
 		114932A52F603A0D009FC75A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 114932A42F603A0D009FC75A /* SystemConfiguration.framework */; };
 		11D2CE522F9B767D00602741 /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D2CE512F9B767D00602741 /* CoreML.framework */; };
 		11D2D0002FA1FD0F00602741 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 11D2CFFF2FA1FD0F00602741 /* libz.tbd */; };
-		499AEBD62F62B7930027B5B3 /* TXLiteAVSDK_Professional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 493BD0782F62A576006DBBE2 /* TXLiteAVSDK_Professional.framework */; };
 		499AEBD82F62B7D60027B5B3 /* TXFFmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 493BD0742F62A56E006DBBE2 /* TXFFmpeg.framework */; };
 		499AEBD92F62B7D60027B5B3 /* TXFFmpeg.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 493BD0742F62A56E006DBBE2 /* TXFFmpeg.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		499AEBDA2F62B7D60027B5B3 /* TXSoundTouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 493BD0752F62A56E006DBBE2 /* TXSoundTouch.framework */; };
-		499AEBDB2F62B7D60027B5B3 /* TXSoundTouch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 493BD0752F62A56E006DBBE2 /* TXSoundTouch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,7 +32,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				499AEBDB2F62B7D60027B5B3 /* TXSoundTouch.framework in Embed Frameworks */,
 				499AEBD92F62B7D60027B5B3 /* TXFFmpeg.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -74,11 +70,27 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		5448BA3C30275CC200F687C2 /* Exceptions for "TXIoTDemo" folder in "Embed Frameworks" phase from "TXIoTDemo" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				trtcsdk/TXLiteAVSDK_IOT.framework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+				trtcsdk/TXSoundTouch.framework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+			};
+			buildPhase = 499AEBDC2F62B7D60027B5B3 /* Embed Frameworks */;
+			membershipExceptions = (
+				trtcsdk/TXLiteAVSDK_IOT.framework,
+				trtcsdk/TXSoundTouch.framework,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1149322C2F601AFF009FC75A /* TXIoTDemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				114932412F601B00009FC75A /* Exceptions for "TXIoTDemo" folder in "TXIoTDemo" target */,
+				5448BA3C30275CC200F687C2 /* Exceptions for "TXIoTDemo" folder in "Embed Frameworks" phase from "TXIoTDemo" target */,
 			);
 			path = TXIoTDemo;
 			sourceTree = "<group>";
@@ -100,13 +112,11 @@
 				114932A22F6039BA009FC75A /* libsqlite3.tbd in Frameworks */,
 				114932972F603991009FC75A /* CoreTelephony.framework in Frameworks */,
 				114932A32F6039C2009FC75A /* libc++.tbd in Frameworks */,
-				499AEBD62F62B7930027B5B3 /* TXLiteAVSDK_Professional.framework in Frameworks */,
 				499AEBD82F62B7D60027B5B3 /* TXFFmpeg.framework in Frameworks */,
 				114932912F603962009FC75A /* MetalKit.framework in Frameworks */,
 				114932952F603988009FC75A /* GLKit.framework in Frameworks */,
 				114932A12F6039B1009FC75A /* Accelerate.framework in Frameworks */,
 				114932992F60399A009FC75A /* CoreServices.framework in Frameworks */,
-				499AEBDA2F62B7D60027B5B3 /* TXSoundTouch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,7 +284,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.iot.appdemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Wildcard_202612;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Wildcard_20260824;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TXIoTDemo/SwiftUI/TXIoTDemo-Bridging-Header.h";
@@ -322,7 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.iot.appdemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Wildcard_202612;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Wildcard_20260824;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "TXIoTDemo/SwiftUI/TXIoTDemo-Bridging-Header.h";
@@ -389,7 +399,9 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -Wno-error=incomplete-umbrella -Xcc -Wno-error=nullability";
 				SDKROOT = iphoneos;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 			};
 			name = Debug;
 		};

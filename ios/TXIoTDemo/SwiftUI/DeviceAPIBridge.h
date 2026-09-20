@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
-#import <TXLiteAVSDK_Professional/TXIoTDeviceManager.h>
-#import <TXLiteAVSDK_Professional/TXIoTEngine.h>
-#import <TXLiteAVSDK_Professional/TXIoTEngineDef.h>
-#import <TXLiteAVSDK_Professional/TXIoTFamilyManager.h>
+#import <TXLiteAVSDK_IOT/TXIoTDeviceManager.h>
+#import <TXLiteAVSDK_IOT/TXIoTEngine.h>
+#import <TXLiteAVSDK_IOT/TXIoTEngineDef.h>
+#import <TXLiteAVSDK_IOT/TXIoTFamilyManager.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

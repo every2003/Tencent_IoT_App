@@ -1,9 +1,9 @@
 #import "AppDelegate.h"
 #import "SceneDelegate.h"
 #import "TXIoTDemo-Swift.h"
-#import <TXLiteAVSDK_Professional/TXIoTEngine.h>
-#import <TXLiteAVSDK_Professional/TXIoTEngineDef.h>
-#import <TXLiteAVSDK_Professional/TXLiveBase.h>
+#import <TXLiteAVSDK_IOT/TXIoTEngine.h>
+#import <TXLiteAVSDK_IOT/TXIoTEngineDef.h>
+#import <TXLiteAVSDK_IOT/TXLiveBase.h>
 
 @interface AppDelegate () <TXIoTEngineDelegate, TXLiveBaseDelegate>
 
@@ -26,11 +26,10 @@ static UIInterfaceOrientationMask gSupportedOrientations = UIInterfaceOrientatio
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    // 配置 License（请替换为从腾讯云控制台获取的 licenseUrl 和 key）
-    // 官方文档：https://cloud.tencent.com/document/product/881/77526
-    NSString *const licenseURL =
-        @"https://1256454991.trtcube-license.cn/license/v2/1256454991_1/v_cube.license";
-    NSString *const licenseKey = @"2aaf3d8ce5d00b1dfe93891c0b8fddc6";
+    // 前往腾讯云点播播放器页面购买：https://cloud.tencent.com/document/product/881/74588
+    // 如果不打算使用腾讯云点播播放器，可以将以下两个常量设置为空字符串
+    NSString *const licenseURL = ;
+    NSString *const licenseKey = ;
     [TXLiveBase setLicenceURL:licenseURL key:licenseKey];
     [TXLiveBase sharedInstance].delegate = self;
     NSLog(@"SDK Version = %@", [TXLiveBase getSDKVersionStr]);

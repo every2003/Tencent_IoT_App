@@ -4,7 +4,7 @@ import android.util.Log
 
 internal object L {
 
-    var isLog = false
+    var isLog = true
 
     private const val DEFAULT_TAG = "demo"
 

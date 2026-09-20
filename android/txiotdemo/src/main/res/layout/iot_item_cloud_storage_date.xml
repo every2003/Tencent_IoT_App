@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iot_llDateChip"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/iot_bg_cloud_date_chip"
+    android:gravity="center"
+    android:minWidth="48dp"
+    android:orientation="vertical"
+    android:paddingHorizontal="6dp"
+    android:paddingVertical="5dp">
+
+    <TextView
+        android:id="@+id/iot_tvWeekDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:textColor="#9DA3B0"
+        android:textSize="11sp"
+        tools:text="今天" />
+
+    <TextView
+        android:id="@+id/iot_tvDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:textColor="#15161A"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        tools:text="06" />
+
+    <TextView
+        android:id="@+id/iot_tvMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:textColor="#9DA3B0"
+        android:textSize="10sp"
+        tools:text="05月" />
+
+</LinearLayout>

@@ -187,7 +187,8 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         super.viewWillAppear(animated)
 
         if captureSession?.isRunning == false {
-            let session = captureSession
+            // AVCaptureSession 的启停本就应在后台线程执行，捕获标记 nonisolated(unsafe)
+            nonisolated(unsafe) let session = captureSession
             DispatchQueue.global(qos: .userInitiated).async {
                 session?.startRunning()
             }
@@ -198,7 +199,7 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         super.viewWillDisappear(animated)
 
         if captureSession?.isRunning == true {
-            let session = captureSession
+            nonisolated(unsafe) let session = captureSession
             DispatchQueue.global(qos: .userInitiated).async {
                 session?.stopRunning()
             }
@@ -268,7 +269,7 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         previewLayer?.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer!)
 
-        let session = captureSession
+        nonisolated(unsafe) let session = captureSession
         DispatchQueue.global(qos: .userInitiated).async {
             session?.startRunning()
         }

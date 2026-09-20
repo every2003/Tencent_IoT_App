@@ -1,5 +1,5 @@
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 // MARK: - String Identifiable 扩展（用于 sheet(item:) 传递 Token）
 extension String: @retroactive Identifiable {
@@ -267,16 +267,23 @@ struct FamilyManageView: View {
         }
         showCreateFamilySheet = false
         DeviceAPIBridge.createFamily(withName: name, address: "") { success, familyId, errorMsg in
-            if success, let fid = familyId {
-                currentFamilyId = fid
-                currentFamilyName = name
-                selectFamily()
-                newFamilyName = ""
-                showToast(L("Family created successfully"))
-            } else {
-                showToast(errorMsg ?? L("Failed to create family"))
+            // SDK 保证回调在主线程执行
+            MainActor.assumeIsolated {
+                handleCreateFamilyResult(success: success, familyId: familyId, name: name, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleCreateFamilyResult(success: Bool, familyId: String?, name: String, errorMsg: String?) {
+        guard success, let fid = familyId else {
+            showToast(errorMsg ?? L("Failed to create family"))
+            return
+        }
+        currentFamilyId = fid
+        currentFamilyName = name
+        selectFamily()
+        newFamilyName = ""
+        showToast(L("Family created successfully"))
     }
 
     private func updateFamilyName() {
@@ -287,26 +294,38 @@ struct FamilyManageView: View {
         }
         showRenameFamilySheet = false
         DeviceAPIBridge.updateFamilyName(name, forFamilyId: currentFamilyId) { success, errorMsg in
-            if success {
-                currentFamilyName = name
-                showToast(L("Family name updated"))
-            } else {
-                showToast(errorMsg ?? L("Modify Failed"))
+            MainActor.assumeIsolated {
+                handleUpdateFamilyNameResult(success: success, name: name, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleUpdateFamilyNameResult(success: Bool, name: String, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Modify Failed"))
+            return
+        }
+        currentFamilyName = name
+        showToast(L("Family name updated"))
     }
 
     private func deleteCurrentFamily() {
         guard !currentFamilyId.isEmpty else { return }
         DeviceAPIBridge.deleteFamily(withId: currentFamilyId) { success, errorMsg in
-            if success {
-                showToast(L("Family deleted"))
-                // 回到主界面，由主界面重新选择家庭
-                dismiss()
-            } else {
-                showToast(errorMsg ?? L("Delete Failed"))
+            MainActor.assumeIsolated {
+                handleDeleteFamilyResult(success: success, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleDeleteFamilyResult(success: Bool, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Delete Failed"))
+            return
+        }
+        showToast(L("Family deleted"))
+        // 回到主界面，由主界面重新选择家庭
+        dismiss()
     }
 
     private func leaveFamily() {
@@ -336,7 +355,7 @@ struct FamilyManageView: View {
         }
         familyManager.removeMember(
             fromFamily: currentFamilyId,
-            userId: currentUser.userId ?? "",
+            userId: currentUser.userId,
             callback: cb
         )
     }
@@ -684,18 +703,25 @@ struct RoomManageView: View {
         guard !familyId.isEmpty else { return }
         isLoading = true
         DeviceAPIBridge.getRoomList(withFamilyId: familyId) { success, roomList, errorMsg in
-            isLoading = false
-            if success, let list = roomList {
-                rooms = list.compactMap { dict in
-                    guard let rid = dict["RoomId"] as? String,
-                        let name = dict["RoomName"] as? String
-                    else { return nil }
-                    let count = dict["DeviceCount"] as? Int ?? 0
-                    return RoomItem(id: rid, name: name, deviceCount: count)
-                }
-            } else {
-                showToast(errorMsg ?? L("Failed to get room list"))
+            nonisolated(unsafe) let roomList = roomList
+            MainActor.assumeIsolated {
+                handleRoomList(success: success, roomList: roomList, errorMsg: errorMsg)
             }
+        }
+    }
+
+    private func handleRoomList(success: Bool, roomList: [[AnyHashable: Any]]?, errorMsg: String?) {
+        isLoading = false
+        guard success, let list = roomList else {
+            showToast(errorMsg ?? L("Failed to get room list"))
+            return
+        }
+        rooms = list.compactMap { dict in
+            guard let rid = dict["RoomId"] as? String,
+                let name = dict["RoomName"] as? String
+            else { return nil }
+            let count = dict["DeviceCount"] as? Int ?? 0
+            return RoomItem(id: rid, name: name, deviceCount: count)
         }
     }
 
@@ -706,13 +732,19 @@ struct RoomManageView: View {
             success,
             deviceList,
             errorMsg in
-            isLoadingDevices = false
-            if success, let list = deviceList {
-                allDevices = list
-            } else {
-                showToast(errorMsg ?? L("Failed to get device list"))
+            MainActor.assumeIsolated {
+                handleAllDevices(success: success, deviceList: deviceList, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleAllDevices(success: Bool, deviceList: [DeviceInfoItem]?, errorMsg: String?) {
+        isLoadingDevices = false
+        guard success, let list = deviceList else {
+            showToast(errorMsg ?? L("Failed to get device list"))
+            return
+        }
+        allDevices = list
     }
 
     /// 加载指定房间中的设备（用于解绑设备时的设备选择列表）
@@ -723,14 +755,20 @@ struct RoomManageView: View {
             success,
             deviceList,
             errorMsg in
-            isLoadingDevices = false
-            if success, let list = deviceList {
-                // 过滤出该房间的设备
-                devicesInRoom = list.filter { $0.roomId == room.id }
-            } else {
-                showToast(errorMsg ?? L("Failed to get device list"))
+            MainActor.assumeIsolated {
+                handleDevicesInRoom(success: success, deviceList: deviceList, room: room, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleDevicesInRoom(success: Bool, deviceList: [DeviceInfoItem]?, room: RoomItem, errorMsg: String?) {
+        isLoadingDevices = false
+        guard success, let list = deviceList else {
+            showToast(errorMsg ?? L("Failed to get device list"))
+            return
+        }
+        // 过滤出该房间的设备
+        devicesInRoom = list.filter { $0.roomId == room.id }
     }
 
     private func createRoom() {
@@ -741,14 +779,20 @@ struct RoomManageView: View {
         }
         showCreateSheet = false
         DeviceAPIBridge.createRoom(withName: name, familyId: familyId) { success, errorMsg in
-            if success {
-                newRoomName = ""
-                showToast(L("Room created successfully"))
-                loadRooms()
-            } else {
-                showToast(errorMsg ?? L("Failed to create room"))
+            MainActor.assumeIsolated {
+                handleCreateRoomResult(success: success, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleCreateRoomResult(success: Bool, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Failed to create room"))
+            return
+        }
+        newRoomName = ""
+        showToast(L("Room created successfully"))
+        loadRooms()
     }
 
     private func renameRoom() {
@@ -758,28 +802,42 @@ struct RoomManageView: View {
         DeviceAPIBridge.renameRoom(withId: room.id, newName: name, familyId: familyId) {
             success,
             errorMsg in
-            if success {
-                if let idx = rooms.firstIndex(where: { $0.id == room.id }) {
-                    rooms[idx].name = name
-                }
-                showToast(L("Room renamed"))
-            } else {
-                showToast(errorMsg ?? L("Rename failed"))
+            MainActor.assumeIsolated {
+                handleRenameRoomResult(success: success, room: room, name: name, errorMsg: errorMsg)
             }
-            selectedRoom = nil
         }
+    }
+
+    private func handleRenameRoomResult(success: Bool, room: RoomItem, name: String, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Rename failed"))
+            selectedRoom = nil
+            return
+        }
+        if let idx = rooms.firstIndex(where: { $0.id == room.id }) {
+            rooms[idx].name = name
+        }
+        showToast(L("Room renamed"))
+        selectedRoom = nil
     }
 
     private func deleteRoom(_ room: RoomItem) {
         DeviceAPIBridge.deleteRoom(withId: room.id, familyId: familyId) { success, errorMsg in
-            if success {
-                rooms.removeAll { $0.id == room.id }
-                showToast(L("Room deleted"))
-            } else {
-                showToast(errorMsg ?? L("Delete Failed"))
+            MainActor.assumeIsolated {
+                handleDeleteRoomResult(success: success, room: room, errorMsg: errorMsg)
             }
-            selectedRoom = nil
         }
+    }
+
+    private func handleDeleteRoomResult(success: Bool, room: RoomItem, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Delete Failed"))
+            selectedRoom = nil
+            return
+        }
+        rooms.removeAll { $0.id == room.id }
+        showToast(L("Room deleted"))
+        selectedRoom = nil
     }
 
     private func bindDeviceToRoom(device: DeviceInfoItem) {
@@ -791,13 +849,19 @@ struct RoomManageView: View {
             deviceName: device.deviceName,
             roomId: room.id
         ) { success, errorMsg in
-            if success {
-                showToast(L("Device moved into \"%@\"", "\(room.name)"))
-                loadRooms()
-            } else {
-                showToast(errorMsg ?? L("Binding Failed"))
+            MainActor.assumeIsolated {
+                handleBindDeviceResult(success: success, room: room, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleBindDeviceResult(success: Bool, room: RoomItem, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Binding Failed"))
+            return
+        }
+        showToast(L("Device moved into \"%@\"", "\(room.name)"))
+        loadRooms()
     }
 
     private func unbindDeviceFromRoom(device: DeviceInfoItem) {
@@ -806,13 +870,19 @@ struct RoomManageView: View {
             productId: device.productId,
             deviceName: device.deviceName
         ) { success, errorMsg in
-            if success {
-                showToast(L("Device removed from room"))
-                loadRooms()
-            } else {
-                showToast(errorMsg ?? L("Failed to remove"))
+            MainActor.assumeIsolated {
+                handleUnbindDeviceResult(success: success, errorMsg: errorMsg)
             }
         }
+    }
+
+    private func handleUnbindDeviceResult(success: Bool, errorMsg: String?) {
+        guard success else {
+            showToast(errorMsg ?? L("Failed to remove"))
+            return
+        }
+        showToast(L("Device removed from room"))
+        loadRooms()
     }
 
     private func showToast(_ msg: String) {
@@ -2086,14 +2156,20 @@ struct SharedToMeView: View {
         else { return }
         isLoadingSharedToMe = true
         DeviceAPIBridge.getSharedDeviceList(withFamilyId: familyId) { success, deviceList, _ in
-            isLoadingSharedToMe = false
-            if success, let list = deviceList {
-                let ownedIds = Set(deviceViewModel.devices.map { "\($0.productId)/\($0.deviceName)" })
-                sharedToMeDevices = list.filter {
-                    let key = "\($0.productId)/\($0.deviceName)"
-                    return !ownedIds.contains(key) || deviceViewModel.sharedDeviceKeys.contains(key)
-                }
+            MainActor.assumeIsolated {
+                handleSharedToMeDevices(success: success, deviceList: deviceList)
             }
+        }
+    }
+
+    /// 过滤出"分享给我且不在自有列表中"的设备
+    private func handleSharedToMeDevices(success: Bool, deviceList: [DeviceInfoItem]?) {
+        isLoadingSharedToMe = false
+        guard success, let list = deviceList else { return }
+        let ownedIds = Set(deviceViewModel.devices.map { "\($0.productId)/\($0.deviceName)" })
+        sharedToMeDevices = list.filter {
+            let key = "\($0.productId)/\($0.deviceName)"
+            return !ownedIds.contains(key) || deviceViewModel.sharedDeviceKeys.contains(key)
         }
     }
 
@@ -2214,7 +2290,7 @@ struct SharedUserRowView: View {
     let onRemove: () -> Void
 
     private var displayNickName: String {
-        let nick = user.nickName ?? ""
+        let nick = user.nickName
         return nick.isEmpty ? L("Nickname not set") : nick
     }
 

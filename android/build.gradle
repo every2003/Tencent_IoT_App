@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath 'com.android.tools.build:gradle:8.5.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
@@ -21,6 +21,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // 腾讯云 Nexus 镜像（聚合 central/jcenter 等）
+        maven { url "https://mirrors.tencent.com/nexus/repository/maven-public/" }
         maven { url "https://maven.aliyun.com/repository/public" }
         // SNAPSHOT
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }

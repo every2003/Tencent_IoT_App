@@ -1,5 +1,5 @@
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 // MARK: - 推送消息数据模型（用于 UI 展示）
 

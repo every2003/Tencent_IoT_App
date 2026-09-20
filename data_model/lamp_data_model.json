@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "profile": {
+    "ProductId": "YOUR_PRODUCT_ID",
+    "CategoryId": "1"
+  },
+  "properties": [
+    {
+      "id": "power_switch",
+      "name": "电源开关",
+      "desc": "灯具电源开关",
+      "mode": "rw",
+      "required": true,
+      "define": {
+        "type": "bool",
+        "mapping": {
+          "0": "关",
+          "1": "开"
+        }
+      }
+    },
+    {
+      "id": "brightness",
+      "name": "亮度",
+      "desc": "灯光亮度百分比",
+      "mode": "rw",
+      "required": true,
+      "define": {
+        "type": "int",
+        "min": "1",
+        "max": "100",
+        "start": "80",
+        "step": "1",
+        "unit": "%"
+      }
+    },
+    {
+      "id": "color_temp",
+      "name": "色温",
+      "desc": "灯光色温",
+      "mode": "rw",
+      "required": false,
+      "define": {
+        "type": "int",
+        "min": "2700",
+        "max": "6500",
+        "start": "4000",
+        "step": "100",
+        "unit": "K"
+      }
+    },
+    {
+      "id": "light_mode",
+      "name": "场景模式",
+      "desc": "预设灯光场景",
+      "mode": "rw",
+      "required": false,
+      "define": {
+        "type": "enum",
+        "mapping": {
+          "0": "手动",
+          "1": "阅读",
+          "2": "休闲",
+          "3": "夜灯"
+        }
+      }
+    }
+  ],
+  "events": [],
+  "actions": []
+}

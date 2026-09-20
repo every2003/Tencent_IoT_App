@@ -30,7 +30,7 @@ import CoreTelephony
         super.init()
         // 完全依赖 SDK 判断登录状态
         if let userInfo = TXIoTEngine.getInstance().getLoginUserInfo() {
-            self.currentUsername = userInfo.userId ?? ""
+            self.currentUsername = userInfo.userId
             self.isLoggedIn = true
         }
         // 监听 AppDelegate 发送的登录状态通知

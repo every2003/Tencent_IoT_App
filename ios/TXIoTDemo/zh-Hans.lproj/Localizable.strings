@@ -27,6 +27,7 @@
 "Binding Failed" = "绑定失败";
 "Binding failed: %@" = "绑定失败：%@";
 "Bound to [%@] successfully" = "绑定到[%@]成功";
+"Brightness" = "亮度";
 "Busy" = "对方忙线中";
 "Call ended" = "通话已结束";
 "Camera off" = "摄像头已关";
@@ -39,6 +40,7 @@
 "Clear Messages" = "清空消息";
 "Clear Push" = "清空推送";
 "Close" = "关闭";
+"Color Temperature" = "色温";
 "Command sent successfully" = "指令发送成功";
 "Confirm" = "确认";
 "Confirm Unbind" = "确定解除";
@@ -151,6 +153,7 @@
 "Leave" = "退出";
 "Leave Family" = "退出家庭";
 "Left family" = "已退出家庭";
+"Leisure" = "休闲";
 "Load Failed" = "加载失败";
 "Load failed: %@" = "加载失败：%@";
 "Loading devices..." = "加载设备列表...";
@@ -162,6 +165,7 @@
 "Login successful" = "登录成功";
 "Manage" = "管理";
 "Manage Devices - %@" = "管理设备 - %@";
+"Manual" = "手动";
 "Me" = "我";
 "Medium" = "信号中";
 "Member removed" = "已移除成员";
@@ -187,6 +191,7 @@
 "Nickname" = "昵称";
 "Nickname not set" = "未设置昵称";
 "Nickname: %@" = "昵称: %@";
+"Night Light" = "夜灯";
 "No Devices" = "暂无设备";
 "No Family" = "暂无家庭";
 "No answer" = "对方无应答";
@@ -206,7 +211,9 @@
 "Not logged in or failed to get user info" = "未登录或获取用户信息失败";
 "Notice" = "提示";
 "OK" = "确定";
+"Off" = "已关闭";
 "Offline" = "离线";
+"On" = "已开启";
 "Online" = "在线";
 "Operation Failed" = "操作失败";
 "Operation failed: %@" = "操作失败：%@";
@@ -244,11 +251,13 @@
 "Product ID" = "产品 ID";
 "Product ID cannot be empty" = "产品ID不能为空";
 "Product ID: %@" = "产品ID: %@";
+"Power" = "电源开关";
 "Push Messages" = "推送消息";
 "QR code format error: %@" = "二维码格式错误：%@";
 "QR code format error: no valid fields found" = "二维码格式错误：未找到有效字段";
 "QR code format error: unable to parse JSON" = "二维码格式错误：无法解析 JSON";
 "Reconnecting..." = "重连中...";
+"Reading" = "阅读";
 "Record" = "录像";
 "Recording" = "录像中";
 "Recording failed on channel %@" = "通道%@录像失败";
@@ -281,6 +290,7 @@
 "Saving..." = "正在保存...";
 "Scan Device QR Code" = "扫描设备二维码";
 "Scan QR Code" = "扫描二维码";
+"Scene Mode" = "场景模式";
 "Screenshot failed" = "截图失败";
 "Screenshot failed: no photo library permission" = "截图失败：无相册权限";
 "Screenshot saved to album" = "截图已保存到相册";
@@ -299,6 +309,7 @@
 "Signature" = "签名";
 "Single Channel" = "单通道";
 "Smart Camera" = "智能摄像头";
+"Smart Ceiling Lamp" = "智能吸顶灯";
 "Smart security, smart life" = "安全守护，智能生活";
 "Snapshot" = "截图";
 "Sound on" = "已开声音";
@@ -368,3 +379,41 @@
 "Went Online" = "上线";
 "Went Offline" = "下线";
 "Remove Binding" = "解除绑定";
+
+/* Cloud Storage */
+"Abnormal Sound" = "异常声音";
+"Area Intrusion" = "区域入侵";
+"Area Loitering" = "区域徘徊";
+"Channel %ld" = "通道 %ld";
+"Cloud Playback" = "云存回看";
+"Door Status Snapshot" = "开门状态抓拍";
+"Doorbell Call" = "门铃呼叫";
+"Event" = "事件";
+"Face Recognition Snapshot" = "人脸识别抓拍";
+"Failed to get cloud storage instance" = "获取云存实例失败";
+"Failed to load day list" = "获取日期列表失败";
+"Failed to load event list" = "获取事件列表失败";
+"Failed to load image" = "图片加载失败";
+"Human Detection" = "人形检测";
+"Incomplete device info" = "设备信息不完整";
+"Loading days..." = "加载日期...";
+"Loading events · %ld loaded" = "正在加载事件 · 已加载 %ld 条";
+"Loading events..." = "加载事件中...";
+"Loading remaining events..." = "正在加载剩余事件...";
+"Motion Detection" = "运动检测";
+"No Channel" = "无通道";
+"No cloud storage data" = "暂无云存数据";
+"No events for this day" = "当天无云存事件";
+"No playable video file for this event" = "事件无可播放的视频文件";
+"No playable video URL" = "无可播放的视频地址";
+"No recording near this time" = "该时间点附近无录像";
+"Playback ended" = "播放结束";
+"Playback error (%ld)" = "播放错误(%ld)";
+"Playback failed (code=%d)" = "播放失败(code=%d)";
+"Tap an event below to start playing" = "点击下方事件开始播放";
+"Tap to play video" = "点击播放视频";
+"Tap to view image" = "点击查看图片";
+"Today" = "今天";
+"Try switching to another date" = "请尝试切换到其他日期";
+"Yesterday" = "昨天";
+"You've reached the end" = "—— 已经到底啦 ——";

@@ -39,10 +39,17 @@ import com.tencent.liteav.iot.TXIoTMonitorSession.TXIoTPlayState
 import com.tencent.liteav.iot.TXIoTMonitorSession.TXIoTStreamType
 import com.tencent.rtmp.ui.TXCloudVideoView
 
-private const val TAG = "DeviceDetailActivity"
-private const val REQUEST_MICROPHONE = 1
 private const val COLOR_PRIMARY = "#006EFF"
 private const val COLOR_LABEL_NORMAL = "#9DA3B0"
+
+private val NON_FATAL_ERROR_CODES = setOf(
+    TXIoTErrorCode.ERR_MIC_START_FAIL,
+    TXIoTErrorCode.ERR_MIC_NOT_AUTHORIZED,
+    TXIoTErrorCode.ERR_MIC_OCCUPY,
+    TXIoTErrorCode.ERR_CAMERA_START_FAIL,
+    TXIoTErrorCode.ERR_CAMERA_NOT_AUTHORIZED,
+    TXIoTErrorCode.ERR_CAMERA_OCCUPY
+)
 
 class DeviceDetailActivity : BaseActivity<IotActivityDeviceDetailBinding>() {
 
@@ -301,6 +308,15 @@ class DeviceDetailActivity : BaseActivity<IotActivityDeviceDetailBinding>() {
     }
 
     private fun handleError(channelId: Int, errorCode: TXIoTErrorCode, errorMessage: String) {
+        if (errorCode in NON_FATAL_ERROR_CODES) {
+            L.e("[$TAG] Channel[$channelId] non-fatal error: $errorCode - $errorMessage")
+            show(errorMessage)
+            if (isOpenTalk) {
+                isOpenTalk = false
+                applyTalkUi(false)
+            }
+            return
+        }
         L.e("[$TAG] Channel[$channelId] unrecoverable error: $errorCode - $errorMessage")
         if (errorCode == TXIoTErrorCode.ERR_DEVICE_SWITCH_TO_VOIP) {
             show(getString(R.string.iot_detail_device_voip_mode))
@@ -488,13 +504,6 @@ class DeviceDetailActivity : BaseActivity<IotActivityDeviceDetailBinding>() {
     }
 
     private fun toggleTalk() {
-        val granted = ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.RECORD_AUDIO
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!granted) {
-            requestMicrophonePermission()
-            return
-        }
         isOpenTalk = !isOpenTalk
         if (isOpenTalk) mediaSession?.startLocalAudio() else mediaSession?.stopLocalAudio()
         applyTalkUi(isOpenTalk)
@@ -639,27 +648,6 @@ class DeviceDetailActivity : BaseActivity<IotActivityDeviceDetailBinding>() {
                 onErr = { _, msg -> show(getString(R.string.iot_detail_command_send_failed, msg)) }
             )
         )
-    }
-
-    private fun requestMicrophonePermission() {
-        val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_MICROPHONE)
-    }
-
-    override fun handleRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode != REQUEST_MICROPHONE) return
-        val allGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-        if (allGranted) {
-            toggleTalk()
-            return
-        }
-        Toast.makeText(
-            applicationContext, getString(R.string.iot_detail_mic_perm_denied), Toast.LENGTH_LONG
-        ).show()
     }
 
     override fun setListener() {

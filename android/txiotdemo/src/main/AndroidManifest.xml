@@ -32,6 +32,7 @@
         </activity>
 
         <activity android:name=".activity.DeviceListActivity" />
+        <activity android:name=".activity.LampDetailActivity" />
         <activity android:name=".activity.FamilyManageActivity" />
         <activity
             android:name=".activity.DeviceDetailActivity"
@@ -39,6 +40,11 @@
         <activity android:name=".activity.AddDeviceActivity" />
         <activity android:name=".activity.MessageActivity" />
         <activity android:name=".activity.PersonalInfoActivity" />
+        <activity
+            android:name=".activity.CloudStorageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.DebugSettingsActivity" />
         <activity
             android:name=".activity.QRCodeScannerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />

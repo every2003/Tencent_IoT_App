@@ -1,5 +1,5 @@
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 struct DevicePropertiesView: View {
     let device: Device

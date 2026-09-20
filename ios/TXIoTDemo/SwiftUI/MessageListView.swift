@@ -1,5 +1,5 @@
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 // MARK: - 消息中心主视图（仅推送通知）
 

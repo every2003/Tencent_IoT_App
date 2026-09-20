@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tencent.iot.txiotdemo.R
+import com.tencent.iot.txiotdemo.common.util.isCeilingLamp
 import com.tencent.liteav.iot.TXIoTEngineDef.TXIoTDeviceInfo
 
 class DeviceAdapter(private val deviceList: List<TXIoTDeviceInfo>) :
@@ -37,7 +38,11 @@ class DeviceAdapter(private val deviceList: List<TXIoTDeviceInfo>) :
         val device = deviceList[position]
 
         holder.tvDeviceName.text = displayNameOf(device)
-        Glide.with(holder.itemView.context).load(device.iconUrl).into(holder.ivDeviceIcon)
+        if (device.isCeilingLamp) {
+            holder.ivDeviceIcon.setImageResource(R.drawable.iot_ic_lamp_device)
+        } else {
+            Glide.with(holder.itemView.context).load(device.iconUrl).into(holder.ivDeviceIcon)
+        }
 
         val deviceKey = "${device.deviceId?.productId}_${device.deviceId?.deviceName}"
         val isOnline = statusMap[deviceKey] ?: false

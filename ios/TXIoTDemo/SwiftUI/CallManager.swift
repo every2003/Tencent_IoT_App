@@ -1,7 +1,7 @@
 import AVFoundation
 import Combine
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 import UIKit
 
 // MARK: - 通话类型

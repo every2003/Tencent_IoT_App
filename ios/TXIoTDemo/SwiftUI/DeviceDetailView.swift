@@ -2,7 +2,7 @@ import AVFoundation
 import Combine
 import Photos
 import SwiftUI
-import TXLiteAVSDK_Professional
+import TXLiteAVSDK_IOT
 
 // MARK: - ViewModel
 
@@ -11,6 +11,11 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
     let device: Device
     let channelList: [Int]
 
+    /// 本页在 ScreenAwakeManager 中的常亮持有者标识
+    /// （统一走管理器仲裁，避免与云存回看等其它业务互相覆盖系统息屏开关）
+    private let screenAwakeOwnerId = "DeviceDetail-\(UUID().uuidString)"
+
+    // 当前操作的通道 ID（对齐 Android currentChannelId）
     var activeChannelId: Int { channelList.first ?? 0 }
 
     @Published var sessionEstablished = false
@@ -100,7 +105,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 self.stopAllRemoteViews()
-                UIApplication.shared.isIdleTimerDisabled = false
+                ScreenAwakeManager.release(self.screenAwakeOwnerId)
                 self.showError(L("Device switched to call mode, streaming stopped"))
             }
             return
@@ -110,7 +115,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
             self.isStreamFailed = true
             self.sessionEstablished = false
             self.showLoading = true
-            UIApplication.shared.isIdleTimerDisabled = false
+            ScreenAwakeManager.release(self.screenAwakeOwnerId)
             self.stopAllRemoteViews()
             self.mediaSession?.stop()
             self.onSessionError?(errorMessage)
@@ -125,7 +130,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
             self.sessionEstablished = true
             self.isStreamFailed = false
             self.show(L("Connected"))
-            UIApplication.shared.isIdleTimerDisabled = true
+            ScreenAwakeManager.acquire(self.screenAwakeOwnerId)
             self.startRemoteViews()
             self.showLoading = false
             self.onSessionEstablishedCallback?()
@@ -394,7 +399,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
         stopAllRemoteViews()
         session.stop()
         sessionEstablished = false
-        UIApplication.shared.isIdleTimerDisabled = false
+        ScreenAwakeManager.release(screenAwakeOwnerId)
         print("Entering background, stopping session")
     }
 
@@ -413,7 +418,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
         startRemoteViews()
         session.muteAllRemoteAudio(isMuted)
         session.start(deviceId)
-        UIApplication.shared.isIdleTimerDisabled = true
+        ScreenAwakeManager.acquire(screenAwakeOwnerId)
         print("Back to foreground, restarting session")
     }
 
@@ -435,7 +440,7 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
         session.remove(self)
         mediaSession = nil
         sessionEstablished = false
-        UIApplication.shared.isIdleTimerDisabled = false
+        ScreenAwakeManager.release(screenAwakeOwnerId)
         print("TXIoTMonitorSession destroyed")
     }
 
@@ -629,6 +634,9 @@ class DeviceDetailViewModel: NSObject, ObservableObject, TXIoTMonitorSessionDele
 struct DeviceDetailView: View {
     let device: Device
     let channelList: [Int]
+
+    /// 本页在 ScreenAwakeManager 中的常亮持有者标识（避免与云存回看等其它业务互相覆盖息屏开关）
+    private let screenAwakeOwnerId = "DeviceDetail-\(UUID().uuidString)"
     @StateObject private var viewModel: DeviceDetailViewModel
 
     private let ctrlBtnTint = Color(red: 0x00 / 255, green: 0x6E / 255, blue: 0xFF / 255)

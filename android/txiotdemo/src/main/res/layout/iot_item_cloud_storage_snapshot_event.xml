@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="4dp"
+    android:background="@drawable/iot_bg_cloud_event_card"
+    android:elevation="1dp"
+    android:padding="9dp">
+
+    <FrameLayout
+        android:id="@+id/iot_thumbnailWrapper"
+        android:layout_width="78dp"
+        android:layout_height="58dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iot_ivThumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/iot_bg_cloud_thumbnail"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/iot_ic_camera_device" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/iot_tvSnapshotTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/iot_cloud_snapshot"
+        android:textColor="#9DA3B0"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/iot_tvEventType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:background="@drawable/iot_bg_cloud_event_type_tag"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:textColor="#006EFF"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@id/iot_thumbnailWrapper"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="人脸识别抓拍" />
+
+    <TextView
+        android:id="@+id/iot_tvEventTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#15161A"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iot_thumbnailWrapper"
+        app:layout_constraintTop_toBottomOf="@id/iot_tvEventType"
+        tools:text="08:00:00" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@id/iot_thumbnailWrapper"
+        app:layout_constraintTop_toBottomOf="@id/iot_tvEventTime">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/iot_cloud_view_image_hint"
+            android:textColor="#6B7280"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

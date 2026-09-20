@@ -30,7 +30,6 @@ import UIKit
         return hostingController
     }
 
-    // 创建设备详情视图控制器
     @MainActor @objc static func createDeviceDetailViewController(
         device: Device,
         channelList: [Int]
@@ -38,6 +37,14 @@ import UIKit
         let deviceDetailView = DeviceDetailView(device: device, channelList: channelList)
 
         let hostingController = UIHostingController(rootView: deviceDetailView)
+        hostingController.navigationItem.largeTitleDisplayMode = .never
+        return hostingController
+    }
+
+    @MainActor @objc static func createLampDetailViewController(device: Device) -> UIViewController {
+        let lampDetailView = LampDetailView(device: device)
+
+        let hostingController = UIHostingController(rootView: lampDetailView)
         hostingController.navigationItem.largeTitleDisplayMode = .never
         return hostingController
     }

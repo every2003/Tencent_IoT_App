@@ -21,6 +21,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/iot_action_cloud_storage"
+        android:title="@string/iot_menu_cloud_storage"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/iot_action_modify_alias"
         android:title="@string/iot_device_modify_alias_title"
         app:showAsAction="never" />

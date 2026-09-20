@@ -30,6 +30,7 @@ class LoginActivity : BaseActivity<IotActivityLoginBinding>() {
     )
     private var userId = ""
     private var isLoggingIn = false
+    private var debugTapCount = 0
 
     companion object {
 
@@ -95,6 +96,13 @@ class LoginActivity : BaseActivity<IotActivityLoginBinding>() {
         with(binding) {
             iotBtnLogin.setOnClickListener {
                 login()
+            }
+            iotTvSmartCameraTitle.setOnClickListener {
+                debugTapCount++
+                if (debugTapCount >= 5) {
+                    debugTapCount = 0
+                    startActivity(Intent(this@LoginActivity, DebugSettingsActivity::class.java))
+                }
             }
         }
     }

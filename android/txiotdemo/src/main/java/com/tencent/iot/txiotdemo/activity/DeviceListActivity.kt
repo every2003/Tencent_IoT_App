@@ -21,6 +21,7 @@ import com.tencent.iot.txiotdemo.common.CommonBottomSheet
 import com.tencent.iot.txiotdemo.common.PopupMenuHelper
 import com.tencent.iot.txiotdemo.common.log.L
 import com.tencent.iot.txiotdemo.common.util.DeviceJsonUtils
+import com.tencent.iot.txiotdemo.common.util.isCeilingLamp
 import com.tencent.iot.txiotdemo.core.adapter.DeviceAdapter
 import com.tencent.iot.txiotdemo.databinding.IotActivityDeviceListBinding
 import com.tencent.iot.txiotdemo.databinding.IotDialogChannelSelectionBinding
@@ -415,7 +416,7 @@ class DeviceListActivity : BaseActivity<IotActivityDeviceListBinding>() {
             adapter = this@DeviceListActivity.adapter
         }
         adapter.setOnItemClickListener { _, device ->
-            showChannelGridDialog(device)
+            handleDeviceTap(device)
         }
         adapter.setOnMenuClickListener { position, device, rootView ->
             showDeviceMenu(position, device, rootView)
@@ -457,6 +458,14 @@ class DeviceListActivity : BaseActivity<IotActivityDeviceListBinding>() {
             putExtra("channelType", channelType)
             putExtra("selectedChannels", selectedChannels?.toIntArray())
         })
+    }
+
+    private fun handleDeviceTap(device: TXIoTDeviceInfo) {
+        if (device.isCeilingLamp) {
+            LampDetailActivity.start(this, device)
+        } else {
+            showChannelGridDialog(device)
+        }
     }
 
     private fun showChannelGridDialog(device: TXIoTDeviceInfo) {
@@ -530,28 +539,37 @@ class DeviceListActivity : BaseActivity<IotActivityDeviceListBinding>() {
         val deviceId = device.deviceId ?: return
         val pid = deviceId.productId.orEmpty()
         val dn = deviceId.deviceName.orEmpty()
-        PopupMenuHelper.show(
-            this, rootView, listOf(
-                PopupMenuHelper.Item("📹", getString(R.string.iot_video_call)) {
-                    IoTCallActivity.start(this, pid, dn, device.aliasName, TXIoTCallMediaType.VIDEO)
-                },
-                PopupMenuHelper.Item("📞", getString(R.string.iot_audio_call)) {
-                    IoTCallActivity.start(this, pid, dn, device.aliasName, TXIoTCallMediaType.AUDIO)
-                },
-                PopupMenuHelper.Item(
-                    "✏️",
-                    getString(R.string.iot_device_modify_alias_title)
-                ) { showModifyAliasDialog(position, device, deviceId) },
-                PopupMenuHelper.Item("🔗", getString(R.string.iot_share_device)) { shareDevice(device) },
-                PopupMenuHelper.Item(
-                    "🗑️",
-                    getString(R.string.iot_unbind_device),
-                    destructive = true
-                ) {
-                    unbindDevice(deviceId)
-                },
-            )
+        val items = mutableListOf<PopupMenuHelper.Item>()
+        if (!device.isCeilingLamp) {
+            items.add(PopupMenuHelper.Item("📹", getString(R.string.iot_video_call)) {
+                IoTCallActivity.start(this, pid, dn, device.aliasName, TXIoTCallMediaType.VIDEO)
+            })
+            items.add(PopupMenuHelper.Item("📞", getString(R.string.iot_audio_call)) {
+                IoTCallActivity.start(this, pid, dn, device.aliasName, TXIoTCallMediaType.AUDIO)
+            })
+        }
+        items.add(
+            PopupMenuHelper.Item(
+                "✏️",
+                getString(R.string.iot_device_modify_alias_title)
+            ) { showModifyAliasDialog(position, device, deviceId) }
         )
+        if (!device.isCeilingLamp) {
+            items.add(PopupMenuHelper.Item("☁️", getString(R.string.iot_cloud_storage)) {
+                CloudStorageActivity.start(this, deviceId)
+            })
+        }
+        items.add(PopupMenuHelper.Item("🔗", getString(R.string.iot_share_device)) { shareDevice(device) })
+        items.add(
+            PopupMenuHelper.Item(
+                "🗑️",
+                getString(R.string.iot_unbind_device),
+                destructive = true
+            ) {
+                unbindDevice(deviceId)
+            }
+        )
+        PopupMenuHelper.show(this, rootView, items)
     }
 
     private fun showModifyAliasDialog(
