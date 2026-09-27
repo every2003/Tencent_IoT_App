@@ -1,0 +1,7 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "iot-pusher": "plugin://tx-iot-sdk/iot-pusher",
+    "iot-player": "plugin://tx-iot-sdk/iot-player"
+  }
+}

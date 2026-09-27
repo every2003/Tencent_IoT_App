@@ -1,0 +1,301 @@
+<!--pages/cloud-storage/cloud-storage.wxml
+  云存页：从设备列表 -> ⋮ 菜单「云存」进入。
+  数据来源：插件 tx-iot-sdk 的 TXIoTCloudStorage（getDayList / getEventList）。
+-->
+<view class="cs-page">
+  <!-- 状态栏占位 -->
+  <view class="cs-status-bar" style="height: {{statusBarHeight}}px;"></view>
+
+  <!-- 顶部导航：标题 + 副标题（两行紧贴）共占 navBarHeight。
+       右侧整块区域留给微信官方胶囊按钮（···/⊙），因此返回和刷新都放在左侧，
+       中间内容区左右预留同样大小的避让间距（取「左侧按钮组」与「胶囊安全区」的较大值），
+       既不与官方 UI 重叠，也能让标题保持屏幕居中。间距由 onLoad 依据胶囊实际位置算出。 -->
+  <view class="cs-navbar" style="height: {{navBarHeight}}px;">
+    <view class="cs-nav-left-group" style="left: {{navSideInset}}px;">
+      <view class="cs-nav-side-btn" bindtap="onBack" hover-class="cs-nav-side--hover">
+        <view class="cs-ic cs-ic-back"></view>
+      </view>
+      <view class="cs-nav-side-btn" bindtap="onRefresh" hover-class="cs-nav-side--hover">
+        <view class="cs-ic cs-ic-refresh {{daysLoading ? 'spinning' : ''}}"></view>
+      </view>
+    </view>
+
+    <view
+      class="cs-nav-center"
+      style="padding-left: {{navContentInset}}px; padding-right: {{navContentInset}}px;"
+    >
+      <view class="cs-nav-title-row">
+        <view class="cs-title-dot {{online ? 'online' : ''}}"></view>
+        <text class="cs-title-text">{{aliasName}}</text>
+      </view>
+      <view class="cs-nav-sub-row">
+        <text class="cs-sub-id">{{productId}}/{{deviceName}}</text>
+        <view class="cs-chip-wrap">
+          <view class="cs-chip {{showChannelMenu ? 'cs-chip--open' : ''}}" catchtap="onToggleChannel">
+            <text class="cs-chip-text">{{channelList[channelIndex]}}</text>
+            <view class="cs-chip-arrow"></view>
+          </view>
+          <!-- 通道下拉浮层（锚定在 chip 下方） -->
+          <view wx:if="{{showChannelMenu}}" class="cs-channel-menu">
+            <view class="cs-channel-tail"></view>
+            <block wx:for="{{channelList}}" wx:key="*this" wx:for-index="idx">
+              <view
+                class="cs-channel-item {{channelIndex === idx ? 'cs-channel-item--active' : ''}}"
+                data-idx="{{idx}}"
+                catchtap="onSelectChannel"
+              >
+                <text>{{item}}</text>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 通道弹窗背景遮罩 -->
+  <view wx:if="{{showChannelMenu}}" class="cs-channel-mask" catchtap="onToggleChannel"></view>
+
+  <!-- 视频预览区：<video> 常驻挂载，暂停/静音/全屏悬浮按钮常显，对齐安卓端 iotPlayerFloatControls。
+       全屏使用 <video> 组件自带的原生 requestFullScreen（系统级真横屏，截屏/状态栏方向都正确），
+       全屏内需要展示的自定义内容按微信要求放在 video 节点内部（原生组件均已支持同层渲染，
+       官方推荐直接用 view 而非 cover-view）。
+       注意：全屏内的时间轴刻意不使用 <scroll-view>，而是用 transform: translateX 自绘平移 +
+       自定义 touchmove 拖拽，因为 scroll-view 在原生全屏下会出现布局/裁切异常（刻度文字被截断），
+       且其原生横向拖拽手势在该场景下也不稳定。-->
+  <view class="cs-video">
+    <video
+      id="cs-video-player"
+      class="cs-video-player"
+      src="{{playerUrl}}"
+      muted="{{videoMuted}}"
+      autoplay="{{!!playerUrl}}"
+      show-fullscreen-btn="{{false}}"
+      show-center-play-btn="{{false}}"
+      show-mute-btn="{{false}}"
+      controls="{{false}}"
+      object-fit="contain"
+      bindloadedmetadata="onVideoLoadedMetadata"
+      bindtimeupdate="onVideoTimeUpdate"
+      binderror="onVideoError"
+      bindplay="onVideoPlay"
+      bindpause="onVideoPause"
+      bindseeked="onVideoSeeked"
+      bindwaiting="onVideoWaiting"
+      bindfullscreenchange="onVideoFullscreenChange"
+    >
+      <!-- 全屏覆盖层：左上角退出按钮 + 右侧悬浮按钮（暂停/静音/退出全屏）+ 底部录像带式进度条，
+           统一随fsControlsVisible 无操作自动隐藏，点击视频区域可重新呼出 -->
+      <view wx:if="{{isFullscreen}}" class="cs-fs-overlay">
+        <view class="cs-fs-tap-layer" bindtap="onVideoTap"></view>
+
+        <!-- 加载/缓冲动画：不随控制条自动隐藏，只要还在等数据就一直展示 -->
+        <view wx:if="{{videoBuffering}}" class="cs-fs-loading">
+          <view class="cs-loading-spinner cs-fs-loading-spinner"></view>
+          <text class="cs-loading-tip cs-fs-loading-tip">加载中...</text>
+        </view>
+
+        <view
+          class="cs-fs-back-btn {{fsControlsVisible ? '' : 'cs-fs-controls--hidden'}}"
+          catchtap="onExitFullscreen"
+        >
+          <view class="cs-ic cs-ic-back--light"></view>
+        </view>
+
+        <view class="cs-fs-float-controls {{fsControlsVisible ? '' : 'cs-fs-controls--hidden'}}">
+          <view wx:if="{{playerUrl}}" class="cs-float-btn" catchtap="onTogglePause">
+            <view class="cs-ic {{videoPaused ? 'cs-ic-play-btn' : 'cs-ic-pause'}}"></view>
+          </view>
+          <view class="cs-float-btn" catchtap="onToggleMute">
+            <view class="cs-ic {{videoMuted ? 'cs-ic-mute' : 'cs-ic-unmute'}}"></view>
+          </view>
+          <view class="cs-float-btn" catchtap="onExitFullscreen">
+            <view class="cs-ic cs-ic-fullscreen-exit"></view>
+          </view>
+        </view>
+
+        <view
+          class="cs-fs-timeline-wrap {{fsControlsVisible ? '' : 'cs-fs-controls--hidden'}}"
+          catchtap="onFsTimelineTap"
+          catchtouchstart="onFsTimelineTouchStart"
+          catchtouchmove="onFsTimelineTouchMove"
+          catchtouchend="onFsTimelineTouchEnd"
+          catchtouchcancel="onFsTimelineTouchEnd"
+        >
+          <view id="cs-fs-timeline-viewport" class="cs-fs-timeline-viewport">
+            <view
+              class="cs-fs-timeline-track {{fsTimelineScrollAnimate ? 'cs-fs-timeline-track--animate' : ''}}"
+              style="width: {{fsTimelineContentWidth}}px; transform: translateX({{-fsTimelineScrollLeft}}px);"
+            >
+              <view class="cs-fs-timeline-ticks">
+                <view
+                  wx:for="{{fsTimelineTicks}}"
+                  wx:key="key"
+                  class="cs-timeline-tick cs-fs-timeline-tick {{item.major ? 'cs-timeline-tick--major' : ''}}"
+                  style="{{item.style}}"
+                >
+                  <text wx:if="{{item.label}}" class="cs-timeline-tick-label cs-fs-timeline-tick-label">{{item.label}}</text>
+                </view>
+              </view>
+              <view class="cs-timeline-bar cs-fs-timeline-bar">
+                <view
+                  wx:for="{{fsTimelineSegments}}"
+                  wx:key="key"
+                  class="cs-timeline-seg"
+                  style="{{item.style}}"
+                ></view>
+              </view>
+            </view>
+          </view>
+
+          <view class="cs-timeline-indicator cs-fs-timeline-indicator">
+            <view class="cs-timeline-indicator-line"></view>
+            <view wx:if="{{timelineHasVideo}}" class="cs-timeline-indicator-tooltip">
+              <text>{{timelineCenterTimeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </video>
+
+    <view wx:if="{{!playerUrl}}" class="cs-video-placeholder">
+      <text class="cs-video-tip">{{emptyEvents ? '暂无云存记录' : '点击下方记录或时间轴播放录像'}}</text>
+    </view>
+
+    <!-- 非全屏：加载/缓冲动画（首次加载、seek 定位、报错重载、播放中途缓冲期间展示） -->
+    <view wx:if="{{playerUrl && videoBuffering && !isFullscreen}}" class="cs-video-loading">
+      <view class="cs-loading-spinner"></view>
+      <text class="cs-loading-tip">加载中...</text>
+    </view>
+
+    <!-- 非全屏：右侧悬浮按钮（暂停/静音/进入全屏），常驻显示 -->
+    <view wx:if="{{!isFullscreen}}" class="cs-video-float-controls">
+      <view wx:if="{{playerUrl}}" class="cs-float-btn" catchtap="onTogglePause">
+        <view class="cs-ic {{videoPaused ? 'cs-ic-play-btn' : 'cs-ic-pause'}}"></view>
+      </view>
+      <view class="cs-float-btn" catchtap="onToggleMute">
+        <view class="cs-ic {{videoMuted ? 'cs-ic-mute' : 'cs-ic-unmute'}}"></view>
+      </view>
+      <view class="cs-float-btn" catchtap="onToggleFullscreen">
+        <view class="cs-ic cs-ic-fullscreen"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期选择条 -->
+  <scroll-view class="cs-date-scroll" scroll-x enable-flex wx:if="{{dateChips.length > 0}}">
+    <view class="cs-date-inner">
+      <view
+        wx:for="{{dateChips}}"
+        wx:key="date"
+        class="cs-date-chip {{item.date === selectedDate ? 'cs-date-chip--active' : ''}}"
+        data-date="{{item.date}}"
+        bindtap="onSelectDate"
+      >
+        <text class="cs-date-week">{{item.weekLabel}}</text>
+        <text class="cs-date-day">{{item.day}}</text>
+        <text class="cs-date-month">{{item.month}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 时间轴：可横向拖拽定位，中心固定指示线 + 时间气泡，支持缩放，对齐安卓端 CloudStorageTimelineView -->
+  <view class="cs-timeline" wx:if="{{dateChips.length > 0}}">
+    <view class="cs-timeline-zoom">
+      <view
+        class="cs-zoom-btn {{timelineZoomOutDisabled ? 'cs-zoom-btn--disabled' : ''}}"
+        catchtap="onZoomOut"
+      >
+        <view class="cs-ic-zoom-minus"></view>
+      </view>
+      <view
+        class="cs-zoom-btn {{timelineZoomInDisabled ? 'cs-zoom-btn--disabled' : ''}}"
+        catchtap="onZoomIn"
+      >
+        <view class="cs-ic-zoom-plus"></view>
+      </view>
+    </view>
+
+    <scroll-view
+      class="cs-timeline-scroll"
+      scroll-x
+      scroll-left="{{timelineScrollLeft}}"
+      scroll-with-animation="{{timelineScrollAnimate}}"
+      bindscroll="onTimelineScroll"
+      bindtouchstart="onTimelineTouchStart"
+      bindtouchend="onTimelineTouchEnd"
+      bindtouchcancel="onTimelineTouchEnd"
+    >
+      <view class="cs-timeline-inner" style="width: {{timelineContentWidth}}px;">
+        <view class="cs-timeline-ticks">
+          <view
+            wx:for="{{timelineTicks}}"
+            wx:key="key"
+            class="cs-timeline-tick {{item.major ? 'cs-timeline-tick--major' : ''}}"
+            style="{{item.style}}"
+          >
+            <text wx:if="{{item.label}}" class="cs-timeline-tick-label">{{item.label}}</text>
+          </view>
+        </view>
+        <view class="cs-timeline-bar">
+          <view
+            wx:for="{{timelineSegments}}"
+            wx:key="key"
+            class="cs-timeline-seg"
+            style="{{item.style}}"
+          ></view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="cs-timeline-indicator">
+      <view class="cs-timeline-indicator-line"></view>
+      <view wx:if="{{timelineHasVideo}}" class="cs-timeline-indicator-tooltip">
+        <text>{{timelineCenterTimeText}}</text>
+      </view>
+    </view>
+
+    <text wx:if="{{!timelineHasVideo}}" class="cs-timeline-empty-tip">暂无录像</text>
+  </view>
+
+  <view class="cs-divider"></view>
+
+  <!-- 事件列表 / 空态 / 加载中 -->
+  <view class="cs-record-area">
+    <view wx:if="{{eventsLoading}}" class="cs-loading">
+      <text class="cs-loading-text">加载中...</text>
+    </view>
+    <view wx:elif="{{emptyDays || emptyEvents}}" class="cs-empty">
+      <text class="cs-empty-text">暂无云存记录</text>
+    </view>
+    <block wx:else>
+      <view
+        wx:for="{{events}}"
+        wx:key="key"
+        class="cs-record-item"
+        data-key="{{item.key}}"
+        bindtap="{{item.hasVideo ? 'onPlayEvent' : 'onViewSnapshot'}}"
+      >
+        <view class="cs-record-thumb">
+          <image
+            wx:if="{{item.thumbnailUrl}}"
+            class="cs-record-thumb-img"
+            src="{{item.thumbnailUrl}}"
+            mode="aspectFill"
+            lazy-load="{{true}}"
+          />
+          <view wx:if="{{item.hasVideo}}" class="cs-ic cs-ic-play"></view>
+        </view>
+        <text class="cs-record-duration">{{item.hasVideo ? item.durationText : '抓图'}}</text>
+        <view class="cs-record-info">
+          <text class="cs-record-type">{{item.typeLabel}}</text>
+          <text class="cs-record-time">{{item.timeText}}</text>
+          <view class="cs-record-action-row">
+            <view class="cs-ic-play-mini"></view>
+            <text class="cs-record-action-text">{{item.hasVideo ? '点击播放视频' : '点击查看图片'}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

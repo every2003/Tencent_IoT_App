@@ -1,0 +1,477 @@
+<incoming-call-banner />
+<view class="page" bindtap="closeDeviceMenu">
+  <!-- 顶部蓝色区 -->
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="topbar-row" style="height: {{navBarHeight}}px;">
+      <view class="title">我的设备</view>
+      <view class="top-actions" style="margin-right: {{menuRight}}px; height: {{menuHeight}}px;">
+        <view class="icon-btn" bindtap="goMessage" hover-class="icon-btn-hover">
+          <view class="ico ico-bell"></view>
+        </view>
+        <view class="icon-btn" bindtap="onAdd" hover-class="icon-btn-hover">
+          <view class="ico ico-plus"></view>
+        </view>
+        <view class="icon-btn" bindtap="onUser" hover-class="icon-btn-hover">
+          <view class="ico ico-user"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 家庭 & 管理入口 -->
+    <view class="family-bar">
+      <view class="family-bar-left" bindtap="openFamilyPicker" hover-class="family-bar-hover">
+        <text class="fam-emoji">🏠</text>
+        <text class="family-name">{{currentFamily.name}}</text>
+        <view class="fb-arrow"></view>
+      </view>
+      <text class="divider">|</text>
+      <text class="manage-text" catchtap="openManage">管理</text>
+    </view>
+  </view>
+
+  <!-- 设备列表 -->
+  <scroll-view class="device-list" scroll-y enhanced show-scrollbar="{{false}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onPullRefresh">
+    <block wx:for="{{devices}}" wx:key="id">
+      <view class="device-card {{deviceMenuId === item.id ? 'device-card-menu-open' : ''}}" bindtap="onDeviceTap" data-id="{{item.id}}" hover-class="device-card-hover">
+        <view class="dev-head">
+          <view class="dev-avatar">
+            <image
+              class="dev-avatar-img"
+              src="{{item.iconUrl || '/images/icon_device.svg'}}"
+              mode="aspectFit"
+              lazy-load="{{true}}"
+              binderror="onDeviceIconError"
+              data-id="{{item.id}}"
+            />
+          </view>
+          <view class="dev-info">
+            <view class="dev-name">{{item.name}}</view>
+            <view class="dev-status">
+              <text class="dot {{item.online ? 'on' : 'off'}}"></text>
+              <text class="status-text">{{item.online ? '在线' : '离线'}}</text>
+            </view>
+          </view>
+          <view class="more-wrap">
+            <view class="more-btn" catchtap="onDeviceMore" data-id="{{item.id}}">
+              <text class="more-dots">⋮</text>
+            </view>
+            <view class="device-menu" wx:if="{{deviceMenuId === item.id}}">
+              <view class="dm-item" catchtap="onDeviceRename" data-id="{{item.id}}">修改别名</view>
+              <view class="dm-line"></view>
+              <view class="dm-item" catchtap="onDeviceCall" data-id="{{item.id}}">通话</view>
+              <view class="dm-line"></view>
+              <view class="dm-item" catchtap="onDeviceUnbind" data-id="{{item.id}}">解绑设备</view>
+              <view class="dm-line"></view>
+              <view class="dm-item" catchtap="onDeviceShare" data-id="{{item.id}}">分享</view>
+              <view class="dm-line"></view>
+              <view class="dm-item" catchtap="onDeviceCloud" data-id="{{item.id}}">云存</view>
+              <view class="dm-line"></view>
+              <view class="dm-item" catchtap="onDeviceVoIP" data-id="{{item.id}}">{{item.voipRegistered ? '注销VoIP通话' : '注册VoIP通话'}}</view>
+            </view>
+          </view>
+        </view>
+        <view class="dev-divider"></view>
+        <view class="dev-pid">{{item.productId}}/{{item.deviceName}}</view>
+      </view>
+    </block>
+
+    <!-- 分享给我的设备 -->
+    <block wx:if="{{sharedToMe.length > 0}}">
+      <view class="shared-section-title">分享给我的设备</view>
+      <block wx:for="{{sharedToMe}}" wx:key="id">
+        <view class="device-card {{deviceMenuId === item.id ? 'device-card-menu-open' : ''}}" bindtap="onSharedDeviceTap"
+              data-id="{{item.id}}" data-name="{{item.name}}"
+              data-product-id="{{item.productId}}" data-device-name="{{item.deviceName}}"
+              hover-class="device-card-hover">
+          <view class="dev-head">
+            <view class="dev-avatar">
+              <image class="dev-avatar-img" src="/images/icon_device.svg" mode="aspectFit" lazy-load="{{true}}" />
+            </view>
+            <view class="dev-info">
+              <view class="dev-name">{{item.name}}</view>
+              <view class="dev-status">
+                <text class="dot {{item.online ? 'on' : 'off'}}"></text>
+                <text class="status-text">{{item.online ? '在线' : '离线'}}</text>
+              </view>
+            </view>
+            <view class="more-wrap">
+              <view class="more-btn" catchtap="onDeviceMore" data-id="{{item.id}}">
+                <text class="more-dots">⋮</text>
+              </view>
+              <view class="device-menu" wx:if="{{deviceMenuId === item.id}}">
+                <view class="dm-item" catchtap="onDeviceRename" data-id="{{item.id}}">修改别名</view>
+                <view class="dm-line"></view>
+                <view class="dm-item" catchtap="onDeviceCall" data-id="{{item.id}}">通话</view>
+                <view class="dm-line"></view>
+                <view class="dm-item" catchtap="onDeviceUnbind" data-id="{{item.id}}">取消分享</view>
+                <view class="dm-line"></view>
+                <view class="dm-item" catchtap="onDeviceCloud" data-id="{{item.id}}">云存</view>
+                <view class="dm-line"></view>
+                <view class="dm-item" catchtap="onDeviceVoIP" data-id="{{item.id}}">{{item.voipRegistered ? '注销VoIP通话' : '注册VoIP通话'}}</view>
+              </view>
+            </view>
+          </view>
+          <view class="dev-divider"></view>
+          <view class="dev-pid">{{item.productId}}/{{item.deviceName}}</view>
+        </view>
+      </block>
+    </block>
+
+    <view wx:if="{{devices.length === 0 && sharedToMe.length === 0}}" class="empty">
+      <view class="empty-icon">
+        <image class="empty-icon-img" src="/images/icon_device.svg" mode="aspectFit" />
+      </view>
+      <view class="empty-title">暂无设备</view>
+      <view class="empty-sub">点击下方按钮添加您的第一台设备</view>
+      <view class="empty-add-btn" bindtap="onAdd" hover-class="empty-add-btn-hover">添加设备</view>
+    </view>
+  </scroll-view>
+
+  <!-- 管理底部弹窗 -->
+  <view class="mask" wx:if="{{showManage}}" bindtap="closeManage"></view>
+  <view class="sheet {{showManage ? 'show' : ''}}" bindtap="closeFamilyMenu"
+    style="{{showManage ? sheetDragStyle : ''}}"
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">管理</view>
+
+    <!-- 家庭选择 + 右侧三点 -->
+    <view class="manage-head">
+      <view class="family-chip">
+        <text class="fam-emoji">🏠</text>
+        <text class="fc-name">{{currentFamily.name}}</text>
+      </view>
+      <view class="dots-btn" catchtap="toggleFamilyMenu">⋮</view>
+
+      <!-- 家庭操作菜单 -->
+      <view class="family-menu" wx:if="{{showFamilyMenu}}">
+        <view class="fm-item" bindtap="onRenameFamily">修改家庭名称</view>
+        <view class="fm-line"></view>
+        <view class="fm-item" bindtap="onCreateFamily">新建家庭</view>
+        <view class="fm-line"></view>
+        <view class="fm-item danger" bindtap="onDeleteFamily">删除当前家庭</view>
+      </view>
+    </view>
+
+    <!-- Tabs -->
+    <view class="tabs">
+      <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-i="0">成员管理</view>
+      <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-i="1">房间管理</view>
+      <view class="tab-item {{activeTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-i="2">设备分享</view>
+    </view>
+
+    <!-- Tab 内容 -->
+    <!-- 成员管理 -->
+    <scroll-view class="tab-content" scroll-y enhanced show-scrollbar="{{false}}" wx:if="{{activeTab === 0}}">
+      <view class="btn-row">
+        <view class="btn btn-primary" bindtap="onCreateInvite"><text class="btn-emoji">+</text>创建邀请</view>
+        <view class="btn btn-ghost" bindtap="onJoinFamily"><text class="btn-emoji">🔑</text>加入家庭</view>
+      </view>
+      <view class="list">
+        <view class="list-item" wx:for="{{members}}" wx:key="id">
+          <view class="li-avatar">
+            <text class="avatar-icon">👤</text>
+          </view>
+          <view class="li-main">
+            <view class="li-title">
+              <text>{{item.name}}</text>
+              <text class="member-badge" wx:if="{{item.isAdmin}}">管理员</text>
+            </view>
+            <view class="li-sub">ID: {{item.userId}}</view>
+          </view>
+          <view wx:if="{{item.isSelf}}" class="quit-btn" catchtap="onQuitFamily" data-id="{{item.id}}" hover-class="quit-btn-hover">
+            <view class="quit-icon"></view>
+            <text>退出</text>
+          </view>
+          <view wx:else class="remove-btn" catchtap="onRemoveMember" data-id="{{item.id}}" hover-class="remove-btn-hover">移除</view>
+        </view>
+        <view wx:if="{{members.length === 0}}" class="member-empty">
+          <text class="member-empty-emoji">👥</text>
+          <text class="member-empty-text">暂无成员</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 房间管理 -->
+    <scroll-view class="tab-content" scroll-y enhanced show-scrollbar="{{false}}" wx:if="{{activeTab === 1}}">
+      <view class="btn btn-primary btn-block" bindtap="onCreateRoom"><text class="btn-emoji">+</text>新建房间</view>
+      <view class="list">
+        <view class="list-item" wx:for="{{rooms}}" wx:key="id">
+          <view class="li-avatar li-avatar-room">
+            <text class="avatar-icon">🚪</text>
+          </view>
+          <view class="li-main">
+            <view class="li-title">{{item.name}}</view>
+            <view class="li-sub">{{item.deviceCount || 0}} 台设备</view>
+          </view>
+          <view class="room-acts">
+            <view class="room-btn room-btn-blue" catchtap="onManageRoom" data-id="{{item.id}}" hover-class="room-btn-blue-hover">管理</view>
+            <view class="room-btn room-btn-blue" catchtap="onRenameRoom" data-id="{{item.id}}" hover-class="room-btn-blue-hover">改名</view>
+            <view class="room-btn room-btn-red" catchtap="onRemoveRoom" data-id="{{item.id}}" hover-class="room-btn-red-hover">删除</view>
+          </view>
+        </view>
+        <view wx:if="{{rooms.length === 0}}" class="room-empty">
+          <text class="room-empty-emoji">🚪</text>
+          <text class="room-empty-text">暂无房间</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 设备分享 -->
+    <scroll-view class="tab-content" scroll-y enhanced show-scrollbar="{{false}}" wx:if="{{activeTab === 2}}">
+      <scroll-view class="share-dev-bar" scroll-x enhanced show-scrollbar="{{false}}">
+        <view
+          class="share-dev-chip {{shareDevice.id === item.id ? 'active' : ''}}"
+          wx:for="{{shareDevices}}"
+          wx:key="id"
+          bindtap="onSelectShareDevice"
+          data-id="{{item.id}}"
+        >{{item.name}}</view>
+        <view wx:if="{{shareDevices.length === 0}}" class="share-dev-empty">当前家庭暂无可分享设备</view>
+      </scroll-view>
+      <view class="btn-row three">
+        <view class="btn btn-primary small" bindtap="onCreateShare"><text class="btn-emoji">+</text>创建分享</view>
+        <view class="btn btn-ghost small" bindtap="onBindShare"><text class="btn-emoji">🔗</text>绑定分享</view>
+        <view class="btn btn-danger-ghost small" bindtap="onRevokeShareBtn"><text class="btn-emoji">✕</text>撤销分享</view>
+      </view>
+      <view class="section-title">分享给我的设备</view>
+      <view class="list">
+        <view class="list-item" wx:for="{{sharedToMe}}" wx:key="id">
+          <view class="li-avatar">
+            <text class="avatar-icon">👤</text>
+          </view>
+          <view class="li-main">
+            <view class="li-title">{{item.name}}</view>
+          </view>
+          <view class="revoke-tag" catchtap="onRevokeShare" data-id="{{item.id}}">撤销</view>
+        </view>
+        <view wx:if="{{sharedToMe.length === 0}}" class="share-empty">
+          <text class="share-empty-emoji">🫥</text>
+          <text class="share-empty-text">暂无分享给我的设备</text>
+        </view>
+      </view>
+      <view class="section-title">我分享出去的设备</view>
+      <view class="list">
+        <view class="list-item" wx:for="{{sharedByMe}}" wx:key="id">
+          <view class="li-avatar li-avatar-letter">
+            <text class="avatar-letter">{{item.letter}}</text>
+          </view>
+          <view class="li-main">
+            <view class="li-title">{{item.userName || item.userId}}</view>
+            <view class="li-sub">ID: {{item.userId}}</view>
+          </view>
+          <view class="revoke-tag" catchtap="onRevokeShare" data-id="{{item.id}}">撤销</view>
+        </view>
+        <view wx:if="{{sharedByMe.length === 0}}" class="share-empty">
+          <text class="share-empty-emoji">🫥</text>
+          <text class="share-empty-text">该设备暂无分享用户</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 房间设备管理弹窗：勾选设备归属当前房间 -->
+  <view class="mask" wx:if="{{showRoomManage}}" bindtap="closeRoomManage"></view>
+  <view class="sheet small {{showRoomManage ? 'show' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view>
+    <view class="rm-title">管理房间「{{roomManageRoom.name}}」</view>
+    <view class="rm-sub">勾选要归入该房间的设备</view>
+    <view class="fp-line"></view>
+    <scroll-view class="rm-list" scroll-y enhanced show-scrollbar="{{false}}">
+      <view
+        class="rm-item"
+        wx:for="{{roomManageDevices}}"
+        wx:key="id"
+        bindtap="toggleRoomDevice"
+        data-id="{{item.id}}"
+      >
+        <view class="rm-dot {{item.online ? 'on' : ''}}"></view>
+        <view class="rm-name">{{item.name}}</view>
+        <view class="rm-check {{item.inRoom ? 'checked' : ''}}">{{item.inRoom ? '✓' : ''}}</view>
+      </view>
+      <view wx:if="{{roomManageDevices.length === 0}}" class="empty">当前家庭暂无设备</view>
+    </scroll-view>
+    <view class="fp-cancel" bindtap="closeRoomManage">完成</view>
+  </view>
+
+  <!-- 家庭选择器弹窗 -->
+  <view class="mask" wx:if="{{showFamilyPicker}}" bindtap="closeFamilyPicker"></view>
+  <view class="sheet small {{showFamilyPicker ? 'show' : ''}}"
+    style="{{showFamilyPicker ? sheetDragStyle : ''}}"
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd">
+    <view class="sheet-handle"></view>
+    <view class="fp-title">选择家庭</view>
+    <view class="fp-line"></view>
+    <view class="fp-list">
+      <view class="fp-item" wx:for="{{families}}" wx:key="id" bindtap="selectFamily" data-id="{{item.id}}">
+        <view class="fp-avatar">🏠</view>
+        <view class="fp-name">{{item.name}}</view>
+        <view class="fp-check" wx:if="{{item.id === currentFamily.id}}">✓</view>
+      </view>
+    </view>
+    <view class="fp-cancel" bindtap="closeFamilyPicker">取消</view>
+  </view>
+
+  <!-- 家庭名称编辑弹窗（新建 / 修改，底部弹出） -->
+  <view class="mask" wx:if="{{showFamilyEdit}}" bindtap="closeFamilyEdit"></view>
+  <view class="sheet small dialog-sheet {{showFamilyEdit ? 'show' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">{{familyEditMode === 'create' ? '新建家庭' : '修改家庭名称'}}</view>
+    <input
+      class="dialog-input"
+      value="{{familyEditName}}"
+      placeholder="请输入家庭名称"
+      placeholder-class="dialog-input-ph"
+      maxlength="20"
+      focus="{{showFamilyEdit}}"
+      confirm-type="done"
+      bindinput="onFamilyEditInput"
+      bindconfirm="confirmFamilyEdit"
+    />
+    <view class="dialog-actions">
+      <view class="dialog-btn dialog-btn-cancel" bindtap="closeFamilyEdit" hover-class="cm-cancel-hover">取消</view>
+      <view class="dialog-btn dialog-btn-confirm" bindtap="confirmFamilyEdit" hover-class="cm-confirm-hover">确定</view>
+    </view>
+  </view>
+
+  <!-- 删除家庭确认弹窗（底部弹出） -->
+  <view class="mask" wx:if="{{showFamilyDelete}}" bindtap="closeFamilyDelete"></view>
+  <view class="sheet small dialog-sheet {{showFamilyDelete ? 'show' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">删除家庭</view>
+    <view class="dialog-msg">确认删除家庭「{{currentFamily.name}}」？删除后不可恢复。</view>
+    <view class="dialog-actions">
+      <view class="dialog-btn dialog-btn-cancel" bindtap="closeFamilyDelete" hover-class="cm-cancel-hover">取消</view>
+      <view class="dialog-btn dialog-btn-danger" bindtap="confirmFamilyDelete">删除</view>
+    </view>
+  </view>
+
+  <!-- 选择通话方式弹窗 -->
+  <view class="mask" wx:if="{{showCallPicker}}" bindtap="closeCallPicker"></view>
+  <view class="sheet small {{showCallPicker ? 'show' : ''}}"
+    style="{{showCallPicker ? sheetDragStyle : ''}}"
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd">
+    <view class="sheet-handle"></view>
+    <view class="ch-title">选择通话方式</view>
+    <view class="ch-sub">请选择视频通话或语音通话</view>
+
+    <view class="ch-list">
+      <view class="channel-item" bindtap="onSelectCall" data-mode="video" hover-class="channel-hover">
+        <view class="channel-icon ci-video">
+          <view class="ci-img ci-img-video"></view>
+        </view>
+        <view class="channel-main">
+          <view class="channel-name">视频通话</view>
+          <view class="channel-desc">拨打视频电话给设备</view>
+        </view>
+        <text class="channel-arrow">›</text>
+      </view>
+
+      <view class="channel-item" bindtap="onSelectCall" data-mode="voice" hover-class="channel-hover">
+        <view class="channel-icon ci-voice">
+          <view class="ci-img ci-img-voice"></view>
+        </view>
+        <view class="channel-main">
+          <view class="channel-name">语音通话</view>
+          <view class="channel-desc">拨打语音电话给设备</view>
+        </view>
+        <text class="channel-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="ch-cancel" bindtap="closeCallPicker">取消</view>
+  </view>
+
+  <view class="mask" wx:if="{{showChannelPicker}}" bindtap="closeChannelPicker"></view>
+  <view class="sheet small {{showChannelPicker ? 'show' : ''}}"
+    style="{{showChannelPicker ? sheetDragStyle : ''}}"
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd">
+    <view class="sheet-handle"></view>
+    <view class="vc-title">选择视频通道</view>
+    <view class="vc-sub">设备: {{channelDeviceDesc}}</view>
+
+    <view class="vc-grid">
+      <view
+        class="vc-cell"
+        wx:for="{{channelOptions}}"
+        wx:key="id"
+        bindtap="onSelectChannelItem"
+        data-id="{{item.id}}"
+      >
+        <view class="vc-card {{item.selected ? 'active' : ''}}">
+          <text class="vc-card-text">通道{{item.id}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="vc-actions">
+      <view class="vc-btn vc-btn-cancel" bindtap="closeChannelPicker" hover-class="cm-cancel-hover">取消</view>
+      <view class="vc-btn vc-btn-confirm" bindtap="onConfirmChannels" hover-class="cm-confirm-hover">确定</view>
+    </view>
+  </view>
+
+  <!-- 设备分享码弹窗 -->
+  <view class="mask" wx:if="{{showShareCodeSheet}}" bindtap="closeShareCodeSheet"></view>
+  <view class="sheet small {{showShareCodeSheet ? 'show' : ''}}"
+    style="{{showShareCodeSheet ? sheetDragStyle : ''}}"
+    bindtouchstart="onSheetTouchStart"
+    bindtouchmove="onSheetTouchMove"
+    bindtouchend="onSheetTouchEnd">
+    <view class="sheet-handle"></view>
+    <view class="sc-title">{{shareCodeTitle}}</view>
+    <input
+      class="sc-text-input"
+      value="{{shareCodeText}}"
+      disabled="{{true}}"
+      confirm-type="done"
+      placeholder=""
+    />
+    <view class="btn btn-primary btn-block sc-copy" bindtap="onCopyShareCode">{{shareCodeCopyText}}</view>
+    <view class="sc-cancel" bindtap="closeShareCodeSheet">取消</view>
+  </view>
+
+  <!-- 通用输入底部弹窗（加入家庭 / 新建房间 / 绑定分享） -->
+  <view class="mask" wx:if="{{showInputSheet}}" bindtap="closeInputSheet"></view>
+  <view class="sheet small dialog-sheet {{showInputSheet ? 'show' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">{{inputSheetTitle}}</view>
+    <input
+      class="dialog-input"
+      value="{{inputSheetValue}}"
+      placeholder="{{inputSheetPlaceholder}}"
+      placeholder-class="dialog-input-ph"
+      maxlength="200"
+      focus="{{showInputSheet}}"
+      confirm-type="done"
+      bindinput="onInputSheetInput"
+      bindconfirm="confirmInputSheet"
+    />
+    <view class="dialog-actions">
+      <view class="dialog-btn dialog-btn-cancel" bindtap="closeInputSheet" hover-class="cm-cancel-hover">取消</view>
+      <view class="dialog-btn dialog-btn-confirm" bindtap="confirmInputSheet" hover-class="cm-confirm-hover">确定</view>
+    </view>
+  </view>
+
+  <!-- 通用确认底部弹窗（删除成员 / 删除房间） -->
+  <view class="mask" wx:if="{{showConfirmSheet}}" bindtap="closeConfirmSheet"></view>
+  <view class="sheet small dialog-sheet {{showConfirmSheet ? 'show' : ''}}" catchtap="noop">
+    <view class="sheet-handle"></view>
+    <view class="sheet-title">{{confirmSheetTitle}}</view>
+    <view class="dialog-msg">{{confirmSheetMsg}}</view>
+    <view class="dialog-actions">
+      <view class="dialog-btn dialog-btn-cancel" bindtap="closeConfirmSheet" hover-class="cm-cancel-hover">取消</view>
+      <view class="dialog-btn dialog-btn-danger" bindtap="confirmConfirmSheet">{{confirmSheetConfirmText}}</view>
+    </view>
+  </view>
+</view>

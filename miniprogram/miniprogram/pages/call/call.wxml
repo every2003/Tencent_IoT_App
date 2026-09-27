@@ -1,0 +1,224 @@
+<!-- 通话页：语音 / 视频
+     query: mode=audio|video, productId, deviceName, name, incoming?
+     phase: ringing | connecting | connected | ended
+     - ringing：被叫响铃 UI（仅当 incoming=1 时进入）
+     - connecting/connected：原通话 UI -->
+<view class="call-root mode-{{mode}} phase-{{phase}}">
+  <!-- =============== 被叫响铃 UI =============== -->
+  <block wx:if="{{phase === 'ringing'}}">
+    <!-- 视频模式：本地 camera 预览作为整屏背景 -->
+    <camera
+      wx:if="{{mode === 'video' && cameraEnabled}}"
+      class="ringing-camera"
+      device-position="{{cameraFront ? 'front' : 'back'}}"
+      flash="off"
+      frame-size="medium"
+      binderror="onCameraError"
+    ></camera>
+    <view wx:if="{{mode === 'video' && !cameraEnabled}}" class="ringing-bg-video"></view>
+    <!-- 视频模式：根据 bgBlur 渲染半透明 / 强遮罩，并整体压暗 -->
+    <view
+      wx:if="{{mode === 'video'}}"
+      class="ringing-mask {{bgBlur ? 'mask-blur' : ''}}"
+    ></view>
+
+    <!-- 语音模式：暖色深棕模糊背景 -->
+    <view wx:if="{{mode === 'audio'}}" class="ringing-bg-audio"></view>
+
+    <!-- 顶部状态栏占位（与 connected 视图共用样式，但不显示计时） -->
+    <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+      <view class="topbar-row" style="height: {{navBarHeight}}px;"></view>
+    </view>
+
+    <!-- 头像 + 名字 -->
+    <view class="ring-info ring-info-{{mode}}">
+      <view class="ring-avatar">
+        <image
+          wx:if="{{avatar}}"
+          class="ring-avatar-img"
+          src="{{avatar}}"
+          mode="aspectFill"
+        ></image>
+        <view wx:else class="ring-avatar-fallback"></view>
+      </view>
+      <view class="ring-name">{{name}}</view>
+    </view>
+
+    <!-- 邀请文案 -->
+    <view class="ring-tip ring-tip-{{mode}}">
+      {{mode === 'video' ? '邀请你视频通话.' : '邀请你语音通话…'}}
+    </view>
+
+    <!-- 视频响铃：上排辅助按钮（翻转 / 模糊背景 / 摄像头开关） -->
+    <view wx:if="{{mode === 'video'}}" class="ring-aux-row">
+      <view class="ring-aux">
+        <view class="ring-aux-btn" bindtap="onSwitchCamera">
+          <view class="ic ic-flip-aux"></view>
+        </view>
+        <view class="ring-aux-label">翻转</view>
+      </view>
+      <view class="ring-aux">
+        <view class="ring-aux-btn {{bgBlur ? 'on' : ''}}" bindtap="onToggleBgBlur">
+          <view class="ic ic-blur"></view>
+        </view>
+        <view class="ring-aux-label">模糊背景</view>
+      </view>
+      <view class="ring-aux">
+        <view class="ring-aux-btn solid" bindtap="onToggleCamera">
+          <view class="ic ic-cam-aux-{{cameraEnabled ? 'on' : 'off'}}"></view>
+        </view>
+        <view class="ring-aux-label">摄像头{{cameraEnabled ? '已开' : '已关'}}</view>
+      </view>
+    </view>
+
+    <!-- 底部：拒绝（红） / 接听（绿） -->
+    <view class="ring-actions ring-actions-{{mode}}">
+      <view class="ring-action">
+        <view class="btn-circle red big" bindtap="onReject">
+          <view class="ic ic-hangup"></view>
+        </view>
+        <view class="ctrl-label">拒绝</view>
+      </view>
+      <view class="ring-action">
+        <view class="btn-circle green big" bindtap="onAccept">
+          <view class="ic ic-accept"></view>
+        </view>
+        <view class="ctrl-label">接听</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- =============== 已发起 / 通话中 UI（原有） =============== -->
+  <block wx:else>
+    <!-- 语音模式：暖棕模糊背景（与响铃一致，截图风格） -->
+    <view wx:if="{{mode === 'audio'}}" class="audio-bg"></view>
+
+    <!-- 视频模式：远端 player 始终创建（connected 前离屏隐藏），
+         保证通话建立前下发的 setAudioRoute 等指令有组件可接收；
+         sound-mode / object-fit / autoplay 由 SDK 内部管理，调用方不要直接配置 -->
+    <iot-player
+      wx:if="{{mode === 'video'}}"
+      component-id="iot-player-call-0"
+      class="{{phase === 'connected' ? 'remote-video' : 'hidden-rtc'}}"
+    ></iot-player>
+
+    <!-- 视频模式：本地 pusher 组件
+         connecting 时全屏当背景；connected 时缩成右上角 PIP -->
+    <iot-pusher
+      wx:if="{{mode === 'video'}}"
+      class="local-pusher {{phase === 'connected' ? 'pip' : 'fullscreen'}}"
+      enable-mic="{{micEnabled}}"
+      enable-camera="{{cameraEnabled}}"
+      device-position="{{cameraFront ? 'front' : 'back'}}"
+    ></iot-pusher>
+
+    <!-- 视频模式占位：组件内部管理 loading 状态 -->
+    <view wx:if="{{mode === 'video' && phase === 'connecting'}}" class="video-bg"></view>
+
+    <!-- 语音模式：不可见 pusher / player，仅传声 -->
+    <iot-pusher
+      wx:if="{{mode === 'audio'}}"
+      class="hidden-rtc"
+      enable-mic="{{micEnabled}}"
+      enable-camera="{{false}}"
+    ></iot-pusher>
+    <iot-player
+      wx:if="{{mode === 'audio'}}"
+      component-id="iot-player-call-0"
+      class="hidden-rtc"
+    ></iot-player>
+
+    <!-- 顶部状态栏：左 PIP 小窗 / 中 计时 / 右 加号 -->
+    <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+      <view class="topbar-row" style="height: {{navBarHeight}}px;">
+        <view class="topbar-action left" bindtap="onMinimize" hover-class="topbar-action--hover">
+          <view class="ic ic-pip"></view>
+        </view>
+        <view class="topbar-center">
+          <view wx:if="{{phase === 'connected'}}" class="topbar-time">{{timerText}}</view>
+        </view>
+        <view class="topbar-action right" bindtap="onMore" hover-class="topbar-action--hover">
+          <view class="ic ic-plus"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 设备信息：视频接通后隐藏（让位远端大画面）
+         语音模式整屏显示（大圆角头像 + 名字，与截图一致） -->
+    <view
+      wx:if="{{!(mode === 'video' && phase === 'connected')}}"
+      class="user-info user-info-{{mode}}"
+    >
+      <view class="user-avatar">
+        <image
+          wx:if="{{avatar}}"
+          class="user-avatar-img"
+          src="{{avatar}}"
+          mode="aspectFill"
+        ></image>
+        <view wx:else class="user-avatar-fallback"></view>
+      </view>
+      <view class="user-name">{{name}}</view>
+    </view>
+
+    <!-- 状态文案：connecting 时显示 -->
+    <view class="status-line" wx:if="{{phase === 'connecting'}}">{{statusText}}</view>
+
+    <!-- ====== 底部控制区 ====== -->
+
+    <!-- 语音模式：mic / 挂断 / 扬声器 横向三键 -->
+    <view wx:if="{{mode === 'audio'}}" class="bottom audio">
+      <view class="ctrl">
+        <view class="btn-circle {{micEnabled ? 'white' : 'gray'}}" bindtap="onToggleMic">
+          <view class="ic ic-mic-{{micEnabled ? 'on' : 'off'}}"></view>
+        </view>
+        <view class="ctrl-label">麦克风{{micEnabled ? '已开' : '已关'}}</view>
+      </view>
+      <view class="ctrl">
+        <view class="btn-circle red" bindtap="onHangup">
+          <view class="ic ic-hangup"></view>
+        </view>
+        <view class="ctrl-label">{{phase === 'connecting' ? '取消' : '挂断'}}</view>
+      </view>
+      <view class="ctrl">
+        <view class="btn-circle {{speakerEnabled ? 'white' : 'gray'}}" bindtap="onToggleSpeaker">
+          <view class="ic ic-spk-{{speakerEnabled ? 'on' : 'off'}}"></view>
+        </view>
+        <view class="ctrl-label">扬声器{{speakerEnabled ? '已开' : '已关'}}</view>
+      </view>
+    </view>
+
+    <!-- 视频模式：上排 mic / spk / cam，下排 模糊背景 / 挂断 / 翻转 -->
+    <view wx:else class="bottom video">
+      <view class="row-3 main">
+        <view class="ctrl">
+          <view class="btn-circle {{micEnabled ? 'white' : 'gray'}}" bindtap="onToggleMic">
+            <view class="ic ic-mic-{{micEnabled ? 'on' : 'off'}}"></view>
+          </view>
+          <view class="ctrl-label">麦克风{{micEnabled ? '已开' : '已关'}}</view>
+        </view>
+        <view class="ctrl">
+          <view class="btn-circle {{speakerEnabled ? 'white' : 'gray'}}" bindtap="onToggleSpeaker">
+            <view class="ic ic-spk-{{speakerEnabled ? 'on' : 'off'}}"></view>
+          </view>
+          <view class="ctrl-label">扬声器{{speakerEnabled ? '已开' : '已关'}}</view>
+        </view>
+        <view class="ctrl">
+          <view class="btn-circle {{cameraEnabled ? 'white' : 'gray'}}" bindtap="onToggleCamera">
+            <view class="ic ic-cam-{{cameraEnabled ? 'on' : 'off'}}"></view>
+          </view>
+          <view class="ctrl-label">摄像头{{cameraEnabled ? '已开' : '已关'}}</view>
+        </view>
+      </view>
+      <view class="row-3 sub">
+        <view class="sq-btn-placeholder"></view>
+        <view class="btn-circle red mid" bindtap="onHangup">
+          <view class="ic ic-hangup"></view>
+        </view>
+        <view class="sq-btn" bindtap="onSwitchCamera">
+          <view class="ic ic-flip"></view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

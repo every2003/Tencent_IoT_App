@@ -1,0 +1,60 @@
+<view class="lamp-page">
+  <view wx:if="{{loading}}" class="loading-tip">加载中...</view>
+
+  <!-- 电源开关 -->
+  <view class="card">
+    <view class="power-row">
+      <view class="power-icon {{powerOn ? 'on' : ''}}">💡</view>
+      <view class="power-text">
+        <view class="power-title">电源</view>
+        <view class="power-sub">{{powerOn ? '已开启' : '已关闭'}}</view>
+      </view>
+      <switch checked="{{powerOn}}" bindchange="onPowerChange" color="#1976ff" />
+    </view>
+  </view>
+
+  <!-- 亮度 -->
+  <view class="card">
+    <view class="card-title">亮度</view>
+    <view class="slider-row">
+      <slider class="slider" min="1" max="100" step="1" value="{{brightness}}"
+        activeColor="#1976ff" block-size="24"
+        bindchanging="onBrightnessChanging" bindchange="onBrightnessChange" />
+      <text class="slider-value">{{brightness}}%</text>
+    </view>
+  </view>
+
+  <!-- 色温 -->
+  <view class="card">
+    <view class="card-title">色温</view>
+    <view class="slider-row">
+      <slider class="slider" min="2700" max="6500" step="100" value="{{colorTemp}}"
+        activeColor="#1976ff" block-size="24"
+        bindchanging="onColorTempChanging" bindchange="onColorTempChange" />
+      <text class="slider-value">{{colorTemp}}K</text>
+    </view>
+  </view>
+
+  <!-- 场景模式 -->
+  <view class="card">
+    <view class="card-title">场景模式</view>
+    <view class="mode-grid">
+      <view class="mode-chip {{lightMode === 0 ? 'active' : ''}}" bindtap="onModeSelect" data-mode="0">
+        <text class="mode-icon">👆</text>
+        <text class="mode-label">手动</text>
+      </view>
+      <view class="mode-chip {{lightMode === 1 ? 'active' : ''}}" bindtap="onModeSelect" data-mode="1">
+        <text class="mode-icon">📖</text>
+        <text class="mode-label">阅读</text>
+      </view>
+      <view class="mode-chip {{lightMode === 2 ? 'active' : ''}}" bindtap="onModeSelect" data-mode="2">
+        <text class="mode-icon">☕</text>
+        <text class="mode-label">休闲</text>
+      </view>
+      <view class="mode-chip {{lightMode === 3 ? 'active' : ''}}" bindtap="onModeSelect" data-mode="3">
+        <text class="mode-icon">🌙</text>
+        <text class="mode-label">夜灯</text>
+      </view>
+    </view>
+  </view>
+</view>

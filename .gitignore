@@ -35,3 +35,8 @@ android/txiotdemo/libs
 # miniapp
 plugin/**/*.js
 !plugin/sdk/**
+project.private.config.json
+node_modules/
+dist/
+*.log
+.DS_Store

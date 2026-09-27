@@ -1,0 +1,61 @@
+<incoming-call-banner />
+<view class="page">
+  <!-- 顶部蓝色区 -->
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-row" style="height: {{navBarHeight}}px;">
+      <view class="back" bindtap="onBack" hover-class="back-hover">
+        <text class="back-arrow">←</text>
+      </view>
+      <view class="nav-title">个人信息</view>
+      <view class="nav-placeholder" style="width: {{menuRight}}px;"></view>
+    </view>
+
+    <view class="profile-head">
+      <view class="avatar-ring">
+        <image
+          wx:if="{{avatarUrl}}"
+          class="avatar"
+          src="{{avatarUrl}}"
+          mode="aspectFill"
+          binderror="onAvatarError"
+        />
+        <view wx:else class="avatar">
+          <text class="avatar-icon">👤</text>
+        </view>
+      </view>
+      <view class="nick">{{nickname}}</view>
+    </view>
+  </view>
+
+  <!-- 账号信息 -->
+  <view class="content">
+    <view class="section-label">账号信息</view>
+    <view class="info-card">
+      <view class="info-icon nick-bg">
+        <text class="ii-icon">👤</text>
+      </view>
+      <view class="info-label">昵称</view>
+      <view class="info-value">{{nickname}}</view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-icon id-bg">
+        <text class="ii-text">ID</text>
+      </view>
+      <view class="info-label">用户ID</view>
+      <view class="info-value">{{userId}}</view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-icon wx-bg">
+        <text class="ii-text">WX</text>
+      </view>
+      <view class="info-label">微信OpenID</view>
+      <view class="info-value info-value-wrap" bindlongpress="onCopyOpenId">{{wechatOpenId}}</view>
+    </view>
+
+    <view class="logout-btn" bindtap="onLogout" hover-class="logout-hover">退出登录</view>
+
+    <view class="footer">IoT Link App</view>
+  </view>
+</view>

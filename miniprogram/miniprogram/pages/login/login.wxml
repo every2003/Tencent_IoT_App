@@ -1,0 +1,62 @@
+<view class="login-page">
+  <!-- 顶部蓝色区域 -->
+  <view class="login-header" style="padding-top: {{statusBarHeight + 60}}px;">
+    <view class="logo-circle">
+      <view class="logo-icon"></view>
+    </view>
+    <view class="brand">智能摄像头</view>
+    <view class="brand-sub">安全守护，智能生活</view>
+  </view>
+
+  <!-- 表单白色卡片 -->
+  <view class="login-card">
+    <view class="card-title">账号登录</view>
+    <view class="card-sub">请填写以下信息完成登录</view>
+
+    <view class="form-item">
+      <view class="label">UserId</view>
+      <view class="input-wrap">
+        <input
+          class="input"
+          placeholder="请输入 UserId"
+          placeholder-class="ph"
+          value="{{openId}}"
+          bindinput="onInput"
+          data-key="openId"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="label">AppKey</view>
+      <view class="input-wrap">
+        <input
+          class="input"
+          placeholder="请输入 AppKey"
+          placeholder-class="ph"
+          value="{{secretId}}"
+          bindinput="onInput"
+          data-key="secretId"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="label">AppSecret</view>
+      <view class="input-wrap">
+        <input
+          class="input"
+          password="{{!showSecret}}"
+          placeholder="请输入 AppSecret"
+          placeholder-class="ph"
+          value="{{secretKey}}"
+          bindinput="onInput"
+          data-key="secretKey"
+        />
+        <view class="eye-btn {{showSecret ? 'eye-on' : 'eye-off'}}" catchtap="toggleSecret"></view>
+      </view>
+    </view>
+
+    <view class="login-btn {{(canLogin && !isLoggingIn) ? '' : 'disabled'}}" bindtap="onLogin">{{ isLoggingIn ? '登录中...' : '登录' }}</view>
+  </view>
+</view>

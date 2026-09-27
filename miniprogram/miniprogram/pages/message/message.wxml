@@ -1,0 +1,33 @@
+<incoming-call-banner />
+<view class="msg-page">
+  <!-- 顶部蓝色区 -->
+  <view class="header" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav">
+      <view class="back" bindtap="onBack">←</view>
+      <view class="nav-title">消息中心</view>
+      <view class="read" bindtap="onReadAll" style="margin-right: {{readRight}}px;">已读</view>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view class="msg-list" scroll-y>
+    <block wx:for="{{messages}}" wx:key="id">
+      <view class="msg-card">
+        <view class="bell-wrap">
+          <view class="bell">
+            <view class="bell-svg ico-bell"></view>
+          </view>
+          <view class="red-dot" wx:if="{{!item.read}}"></view>
+        </view>
+        <view class="msg-body">
+          <view class="msg-head">
+            <view class="msg-title">{{item.title}}</view>
+            <view class="msg-time">{{item.time}}</view>
+          </view>
+          <view class="msg-content">{{item.content}}</view>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{messages.length === 0}}" class="empty">暂无消息</view>
+  </scroll-view>
+</view>

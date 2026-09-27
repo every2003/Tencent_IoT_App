@@ -1,0 +1,545 @@
+/* 通话页样式：语音 / 视频 — 与设计稿对齐
+ * 视频模式：本地推流全屏当背景；接通后远端推流当背景，自己缩成 PIP
+ * 语音模式：纯深色背景；底部 3 键（mic / 挂断 / 扬声器）
+ */
+
+page {
+  height: 100%;
+  background: #1f1c1a;
+}
+
+.call-root {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  color: #fff;
+}
+
+/* 视频模式占位渐变（拿到 RTC 房间参数前的兜底背景） */
+.video-bg {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #4a4d4f 0%, #2d2f31 100%);
+  z-index: 0;
+}
+
+/* 远端视频：connected 时全屏背景 */
+.remote-video {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+
+/* 本地推流：connecting 时全屏自拍预览 */
+.local-pusher.fullscreen {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+}
+
+/* 本地推流：connected 时缩成右上角 PIP 小窗 */
+.local-pusher.pip {
+  position: absolute;
+  right: 24rpx;
+  top: 160rpx;
+  width: 220rpx;
+  height: 320rpx;
+  z-index: 5;
+  border-radius: 18rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.45);
+  border: 2rpx solid rgba(255, 255, 255, 0.18);
+}
+
+/* 语音模式不可见挂载 */
+.hidden-rtc {
+  position: absolute;
+  width: 1px; height: 1px;
+  left: -9999px; top: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===== 顶部状态栏 ===== */
+.topbar {
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  z-index: 10;
+}
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+}
+.topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.topbar-time {
+  font-size: 30rpx;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+  text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.4);
+}
+
+/* 顶部左右图标按钮（小窗 / +） */
+.topbar-action {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  transition: opacity 0.1s ease;
+}
+.topbar-action--hover { opacity: 0.6; }
+
+.ic-pip {
+  width: 44rpx;
+  height: 44rpx;
+  background: no-repeat center / contain;
+  /* 截图：两个堆叠的圆角方块 */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='8' width='13' height='13' rx='2' ry='2'/><path d='M21 16V5a2 2 0 0 0-2-2H8'/></svg>");
+}
+.ic-plus {
+  width: 44rpx;
+  height: 44rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>");
+}
+
+/* ===== 语音模式：暖棕模糊背景（与响铃一致，截图风格） ===== */
+.audio-bg {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 0;
+  background:
+    radial-gradient(120% 80% at 50% 35%, #4a3b30 0%, #2c241f 60%, #1a1614 100%);
+}
+
+/* ===== 设备头像 + 名字（截图风格大圆角） ===== */
+.user-info {
+  position: absolute;
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
+  pointer-events: none;
+}
+/* 语音通话整屏布局：头像稍上 1/3 处 */
+.user-info-audio { top: 32%; }
+/* 视频 connecting 时仍居中靠上（connected 时此块不渲染） */
+.user-info-video { top: 22%; }
+
+.user-avatar {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 28rpx;
+  overflow: hidden;
+  background: #3a2f27;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.35);
+}
+.user-info-video .user-avatar {
+  width: 168rpx;
+  height: 168rpx;
+  border-radius: 24rpx;
+  background: rgba(40, 40, 40, 0.95);
+}
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* fallback：深灰底 + 白色相机图标（截图风格） */
+.user-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: #2a2a2a;
+  position: relative;
+}
+.user-avatar-fallback::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: no-repeat center / 52% 52%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/><circle cx='12' cy='12' r='3' fill='%232a2a2a'/></svg>");
+}
+
+.user-name {
+  margin-top: 24rpx;
+  font-size: 36rpx;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.5);
+  letter-spacing: 1rpx;
+}
+
+/* ===== 状态文案 ===== */
+.status-line {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 460rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 4;
+  text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.4);
+}
+
+/* ===== 底部控制区公共 ===== */
+.bottom {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(60rpx + env(safe-area-inset-bottom));
+  z-index: 6;
+  padding: 0 32rpx;
+}
+
+.ctrl {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ctrl-label {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1rpx 2rpx rgba(0,0,0,0.4);
+}
+
+/* 圆形按钮 */
+.btn-circle {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.1s ease;
+}
+.btn-circle:active { transform: scale(0.94); }
+
+.btn-circle.white {
+  background: #fff;
+}
+.btn-circle.gray {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(20rpx);
+}
+.btn-circle.red {
+  background: #ff4d4f;
+  box-shadow: 0 6rpx 16rpx rgba(255, 77, 79, 0.35);
+}
+
+/* 接听按钮（响铃 UI 用） */
+.btn-circle.green {
+  background: #34c759;
+  box-shadow: 0 6rpx 16rpx rgba(52, 199, 89, 0.35);
+}
+.btn-circle.big {
+  width: 132rpx;
+  height: 132rpx;
+}
+
+/* ===== 语音模式：3 键横排 ===== */
+.bottom.audio {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
+/* ===== 视频模式：双排 ===== */
+.bottom.video {
+  display: flex;
+  flex-direction: column;
+  gap: 56rpx;
+}
+.row-3 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32rpx;
+}
+.row-3.main { justify-content: space-around; }
+.row-3.sub  { justify-content: space-between; align-items: center; padding: 0 64rpx; }
+
+/* 翻转摄像头按钮（深色圆角方块底） */
+.sq-btn {
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18rpx;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20rpx);
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+.sq-btn:active { transform: scale(0.94); }
+
+/* 占位：保持挂断按钮居中（原左侧模糊背景按钮位置） */
+.sq-btn-placeholder {
+  width: 88rpx;
+  height: 88rpx;
+}
+
+/* ===== 图标（白底按钮内为深色图标，灰底按钮内为白色图标，红色按钮内为白色） ===== */
+.ic {
+  width: 56rpx;
+  height: 56rpx;
+  background: no-repeat center / contain;
+}
+
+/* 白底按钮：深灰图标 */
+.btn-circle.white .ic-mic-on   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z'/><path d='M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.08A7 7 0 0 0 19 11z'/></svg>"); }
+.btn-circle.white .ic-spk-on   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M3 10v4a1 1 0 0 0 1 1h3l4.29 4.29A1 1 0 0 0 13 18.59V5.41a1 1 0 0 0-1.71-.7L7 9H4a1 1 0 0 0-1 1z'/><path d='M16.5 12a4.5 4.5 0 0 0-2.25-3.9 1 1 0 1 0-1 1.73A2.5 2.5 0 0 1 14.5 12a2.5 2.5 0 0 1-1.25 2.17 1 1 0 1 0 1 1.73A4.5 4.5 0 0 0 16.5 12z'/><path d='M19 5.41a1 1 0 0 0-1.5 1.31A7 7 0 0 1 19.5 12a7 7 0 0 1-2 4.28 1 1 0 1 0 1.43 1.4A9 9 0 0 0 21.5 12 9 9 0 0 0 19 5.41z'/></svg>"); }
+.btn-circle.white .ic-cam-on   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/></svg>"); }
+.btn-circle.white .ic-mic-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z'/><path d='M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.08A7 7 0 0 0 19 11z'/><line x1='3' y1='3' x2='21' y2='21' stroke='%231f1f1f' stroke-width='2' stroke-linecap='round'/></svg>"); }
+.btn-circle.white .ic-spk-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M3 10v4a1 1 0 0 0 1 1h3l4.29 4.29A1 1 0 0 0 13 18.59V5.41a1 1 0 0 0-1.71-.7L7 9H4a1 1 0 0 0-1 1z'/><line x1='15' y1='9' x2='21' y2='15' stroke='%231f1f1f' stroke-width='2' stroke-linecap='round'/><line x1='21' y1='9' x2='15' y2='15' stroke='%231f1f1f' stroke-width='2' stroke-linecap='round'/></svg>"); }
+.btn-circle.white .ic-cam-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/><line x1='3' y1='3' x2='21' y2='21' stroke='%231f1f1f' stroke-width='2' stroke-linecap='round'/></svg>"); }
+
+/* 灰底按钮：白色图标 */
+.btn-circle.gray .ic-mic-on,
+.btn-circle.gray .ic-mic-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z'/><path d='M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.08A7 7 0 0 0 19 11z'/></svg>"); }
+.btn-circle.gray .ic-mic-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3z'/><path d='M19 11a1 1 0 0 0-2 0 5 5 0 0 1-10 0 1 1 0 0 0-2 0 7 7 0 0 0 6 6.92V21H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-3.08A7 7 0 0 0 19 11z'/><line x1='3' y1='3' x2='21' y2='21' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>"); }
+.btn-circle.gray .ic-spk-on   { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M3 10v4a1 1 0 0 0 1 1h3l4.29 4.29A1 1 0 0 0 13 18.59V5.41a1 1 0 0 0-1.71-.7L7 9H4a1 1 0 0 0-1 1z'/><path d='M16.5 12a4.5 4.5 0 0 0-2.25-3.9 1 1 0 1 0-1 1.73A2.5 2.5 0 0 1 14.5 12a2.5 2.5 0 0 1-1.25 2.17 1 1 0 1 0 1 1.73A4.5 4.5 0 0 0 16.5 12z'/></svg>"); }
+.btn-circle.gray .ic-spk-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M3 10v4a1 1 0 0 0 1 1h3l4.29 4.29A1 1 0 0 0 13 18.59V5.41a1 1 0 0 0-1.71-.7L7 9H4a1 1 0 0 0-1 1z'/><line x1='15' y1='9' x2='21' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/><line x1='21' y1='9' x2='15' y2='15' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>"); }
+.btn-circle.gray .ic-cam-on,
+.btn-circle.gray .ic-cam-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/></svg>"); }
+.btn-circle.gray .ic-cam-off  { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/><line x1='3' y1='3' x2='21' y2='21' stroke='white' stroke-width='2' stroke-linecap='round'/></svg>"); }
+
+/* 红色按钮：白色挂断图标（旋转 135°） */
+.btn-circle.red .ic-hangup {
+  width: 60rpx;
+  height: 60rpx;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M21.83 15.05l-3.07-.36a1 1 0 0 0-.83.29l-2.22 2.22a13 13 0 0 1-7.34-7.34l2.22-2.22a1 1 0 0 0 .29-.83l-.36-3.07A1 1 0 0 0 9.52 3H3.5C2.67 3 2 3.67 2 4.5 2 14.18 9.82 22 19.5 22c.83 0 1.5-.67 1.5-1.5v-6.02a1 1 0 0 0-.95-1.43z' transform='rotate(135 12 12)'/></svg>");
+}
+
+/* 翻转摄像头图标 */
+.sq-btn .ic-flip {
+  width: 56rpx;
+  height: 56rpx;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='17 1 21 5 17 9'/><path d='M3 11V9a4 4 0 0 1 4-4h14'/><polyline points='7 23 3 19 7 15'/><path d='M21 13v2a4 4 0 0 1-4 4H3'/><circle cx='12' cy='12' r='3'/></svg>");
+}
+
+/* ===================== 被叫响铃 UI ===================== */
+
+/* 视频响铃：本地 camera 全屏 */
+.ringing-camera {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+/* 视频响铃：摄像头未开时的兜底背景 */
+.ringing-bg-video {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, #34322f 0%, #1f1d1b 100%);
+  z-index: 0;
+}
+
+/* 视频响铃整屏遮罩，让头像/文案可读；mask-blur 加强压暗 */
+.ringing-mask {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.18);
+  z-index: 1;
+  pointer-events: none;
+}
+.ringing-mask.mask-blur {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12rpx);
+}
+
+/* 语音响铃：暖棕模糊背景（与截图一致） */
+.ringing-bg-audio {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 0;
+  background:
+    radial-gradient(120% 80% at 50% 35%, #4a3b30 0%, #2c241f 60%, #1a1614 100%);
+}
+
+/* 头像 + 名字容器 */
+.ring-info {
+  position: absolute;
+  left: 0; right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
+  pointer-events: none;
+}
+.ring-info-audio { top: 24%; }
+.ring-info-video { top: 16%; }
+
+.ring-avatar {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 28rpx;
+  overflow: hidden;
+  background: #3a2f27;
+  box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.35);
+}
+.ring-info-video .ring-avatar {
+  width: 168rpx;
+  height: 168rpx;
+  border-radius: 24rpx;
+}
+.ring-avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* 兜底：无 avatar 时显示深灰底 + 白色相机图标 */
+.ring-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  background: #2a2a2a;
+}
+.ring-avatar-fallback::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: no-repeat center / 52% 52%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z'/><circle cx='12' cy='12' r='3' fill='%232a2a2a'/></svg>");
+}
+
+.ring-name {
+  margin-top: 24rpx;
+  font-size: 36rpx;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.5);
+  letter-spacing: 1rpx;
+}
+
+/* 邀请文案（"邀请你语音通话…" / "邀请你视频通话."） */
+.ring-tip {
+  position: absolute;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.62);
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.5);
+  z-index: 4;
+  pointer-events: none;
+}
+.ring-tip-audio { top: 56%; }
+.ring-tip-video { top: 48%; }
+
+/* 视频响铃：上排辅助按钮 */
+.ring-aux-row {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(360rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 48rpx;
+  z-index: 5;
+}
+.ring-aux {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ring-aux-btn {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease;
+}
+.ring-aux-btn:active { transform: scale(0.94); }
+.ring-aux-btn.solid {
+  /* "摄像头已开" 用白底（与截图右侧白圆按钮一致） */
+  background: #fff;
+}
+.ring-aux-btn.on {
+  background: rgba(255, 255, 255, 0.85);
+}
+.ring-aux-label {
+  margin-top: 14rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.5);
+}
+
+/* 底部 拒绝 / 接听 */
+.ring-actions {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: calc(80rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 64rpx;
+  z-index: 6;
+}
+/* 视频模式底部排距更紧凑 */
+.ring-actions-video {
+  bottom: calc(80rpx + env(safe-area-inset-bottom));
+  padding: 0 80rpx;
+}
+.ring-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 视频响铃工具栏图标 */
+.ic-flip-aux {
+  width: 56rpx;
+  height: 56rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 4h-3.17l-1.84-2H8.99L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z'/><circle cx='12' cy='13' r='3.5'/><path d='M9 10l-2 2 2 2' /><path d='M15 10l2 2-2 2'/></svg>");
+}
+.ic-blur {
+  width: 56rpx;
+  height: 56rpx;
+  background: no-repeat center / contain;
+  /* 截图为方框内人物剪影 + 斜线纹的"虚化背景"icon */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='3' ry='3'/><path d='M9 9.5a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0z' fill='white' stroke='none'/><path d='M5 17c1.5-3 3.5-4.5 6-4.5s4.5 1.5 6 4.5' fill='white' stroke='none'/><path d='M16 4l4 4M14 4l6 6M12 4l8 8M10 4l10 10' stroke='white' stroke-width='1' opacity='0.55'/></svg>");
+}
+.ring-aux-btn.solid .ic-cam-aux-on {
+  width: 56rpx;
+  height: 56rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/></svg>");
+}
+.ring-aux-btn.solid .ic-cam-aux-off {
+  width: 56rpx;
+  height: 56rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231f1f1f'><path d='M21 6.5l-5 3.5V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2l5 3.5z'/><line x1='3' y1='3' x2='21' y2='21' stroke='%231f1f1f' stroke-width='2' stroke-linecap='round'/></svg>");
+}
+
+/* 红色按钮 (.btn-circle.red.big) 内部沿用现有 .ic-hangup 旋转 135° SVG */
+
+/* 绿色接听按钮内部：白色听筒（不旋转） */
+.btn-circle.green .ic-accept {
+  width: 60rpx;
+  height: 60rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M21.83 15.05l-3.07-.36a1 1 0 0 0-.83.29l-2.22 2.22a13 13 0 0 1-7.34-7.34l2.22-2.22a1 1 0 0 0 .29-.83l-.36-3.07A1 1 0 0 0 9.52 3H3.5C2.67 3 2 3.67 2 4.5 2 14.18 9.82 22 19.5 22c.83 0 1.5-.67 1.5-1.5v-6.02a1 1 0 0 0-.95-1.43z'/></svg>");
+}

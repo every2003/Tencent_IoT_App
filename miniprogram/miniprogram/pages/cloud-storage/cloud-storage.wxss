@@ -1,0 +1,798 @@
+/* pages/cloud-storage/cloud-storage.wxss
+ * 云存页：自定义 navbar + 设备 id 行 + 视频区 + 时间轴 + 列表/空态
+ */
+
+page {
+  background: #f4f5f7;
+  height: 100%;
+}
+
+.cs-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+/* ===== 顶部导航 ===== */
+.cs-status-bar {
+  width: 100%;
+  background: #ffffff;
+}
+.cs-navbar {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: #ffffff;
+  padding: 0 24rpx;
+}
+
+/* 左侧按钮组（返回 +刷新）。右侧不放任何自定义按钮，整块留给微信官方胶囊，避免遮挡 */
+.cs-nav-left-group {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+.cs-nav-side-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  transition: opacity 0.1s ease;
+}
+.cs-nav-side--hover { opacity: 0.55; }
+
+/* 标题 + 副标题两行紧贴，整体竖直填满 navBarHeight。
+   左右避让间距由 JS 依据胶囊实际位置算出后以内联样式注入 */
+.cs-nav-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 0;
+}
+.cs-nav-title-row {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  line-height: 1.1;
+}
+.cs-title-dot {
+  width: 14rpx; height: 14rpx;
+  border-radius: 50%;
+  background: #c8c9cc;
+  margin-right: 10rpx;
+  flex: none;
+}
+.cs-title-dot.online {
+  background: #34c759;
+}
+.cs-title-text {
+  font-size: 32rpx;
+  color: #1a1a1a;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 副标题行：紧贴主标题（margin-top 极小） */
+.cs-nav-sub-row {
+  margin-top: 4rpx;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  line-height: 1.1;
+}
+.cs-sub-id {
+  font-size: 22rpx;
+  color: #8a8e94;
+  margin-right: 12rpx;
+  letter-spacing: 0.5rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* 避让胶囊后副标题可用宽度变窄，由设备 ID 让位截断，保证通道按钮完整可见可点 */
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+.cs-ic {
+  width: 44rpx;
+  height: 44rpx;
+  background: no-repeat center / contain;
+}
+.cs-ic-back {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='15 18 9 12 15 6'/></svg>");
+}
+.cs-ic-refresh {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976ff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='23 4 23 10 17 10'/><polyline points='1 20 1 14 7 14'/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10'/><path d='M20.49 15a9 9 0 0 1-14.85 3.36L1 14'/></svg>");
+  transform-origin: center;
+}
+.cs-ic-refresh.spinning {
+  animation: cs-spin 1s linear infinite;
+}
+@keyframes cs-spin {
+  from { transform: rotate(0); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ===== chip：通道按钮 ===== */
+.cs-chip-wrap {
+  position: relative;
+  z-index: 21; /* 高于 mask */
+  flex: none; /* 不被设备 ID 挤压，保证通道按钮完整可点 */
+}
+.cs-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 36rpx;
+  padding: 0 14rpx;
+  border-radius: 18rpx;
+  background: #e8f1ff;
+  transition: background 0.15s ease;
+}
+.cs-chip--open {
+  background: #d8e5ff;
+}
+.cs-chip-text {
+  font-size: 22rpx;
+  color: #1976ff;
+  margin-right: 6rpx;
+  line-height: 1;
+}
+.cs-chip-arrow {
+  width: 14rpx;
+  height: 14rpx;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231976ff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  transition: transform 0.18s ease;
+}
+.cs-chip--open .cs-chip-arrow {
+  transform: rotate(180deg);
+}
+
+/* ===== 日期选择条 ===== */
+.cs-date-scroll {
+  width: 100%;
+  background: #ffffff;
+  white-space: nowrap;
+  border-bottom: 2rpx solid #f4f5f7;
+}
+.cs-date-inner {
+  display: flex;
+  padding: 16rpx 20rpx;
+  box-sizing: border-box;
+}
+.cs-date-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 108rpx;
+  height: 108rpx;
+  margin-right: 16rpx;
+  border-radius: 16rpx;
+  background: #f4f5f7;
+  flex: none;
+  transition: background 0.15s ease;
+}
+.cs-date-chip--active {
+  background: #1976ff;
+}
+.cs-date-week {
+  font-size: 20rpx;
+  color: #9da3b0;
+  line-height: 1.3;
+}
+.cs-date-chip--active .cs-date-week {
+  color: #cce0ff;
+}
+.cs-date-day {
+  font-size: 32rpx;
+  color: #1a1a1a;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.cs-date-chip--active .cs-date-day {
+  color: #ffffff;
+}
+.cs-date-month {
+  font-size: 18rpx;
+  color: #9da3b0;
+  line-height: 1.3;
+}
+.cs-date-chip--active .cs-date-month {
+  color: #cce0ff;
+}
+
+/* ===== 通道下拉浮层（锚定在 chip 下方，右对齐） ===== */
+.cs-channel-mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.06);
+  z-index: 19;
+}
+.cs-channel-menu {
+  position: absolute;
+  top: calc(100% + 14rpx);
+  right: 0;
+  min-width: 220rpx;
+  background: #ffffff;
+  border-radius: 14rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  padding: 8rpx 0;
+  z-index: 22;
+  overflow: visible;
+}
+/* 小尾巴：指向 chip */
+.cs-channel-tail {
+  position: absolute;
+  top: -10rpx;
+  right: 28rpx;
+  width: 20rpx;
+  height: 20rpx;
+  background: #ffffff;
+  transform: rotate(45deg);
+  box-shadow: -2rpx -2rpx 6rpx rgba(0, 0, 0, 0.04);
+  border-radius: 4rpx;
+}
+.cs-channel-item {
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 28rpx;
+  font-size: 26rpx;
+  color: #1a1a1a;
+}
+.cs-channel-item--active {
+  color: #1976ff;
+  font-weight: 500;
+}
+
+/* ===== 视频预览区 ===== */
+.cs-video {
+  position: relative;
+  width: 100%;
+  height: 420rpx;
+  background: #000000;
+}
+.cs-video-player {
+  width: 100%;
+  height: 100%;
+}
+.cs-video-placeholder {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cs-video-tip {
+  font-size: 24rpx;
+  color: #7a7a7a;
+}
+
+/* 加载/缓冲动画：盖在视频上方，pointer-events: none 不拦截悬浮按钮点击 */
+.cs-video-loading {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+.cs-loading-spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  animation: cs-spin 0.8s linear infinite;
+}
+.cs-loading-tip {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* 视频右侧悬浮控制按钮（暂停 / 静音 / 全屏），常驻显示，对齐安卓端 iotPlayerFloatControls */
+.cs-video-float-controls {
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  z-index: 4;
+}
+.cs-float-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+.cs-float-btn:last-child {
+  margin-bottom: 0;
+}
+.cs-float-btn .cs-ic {
+  width: 32rpx;
+  height: 32rpx;
+}
+.cs-ic-mute {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><line x1='23' y1='9' x2='17' y2='15'/><line x1='17' y1='9' x2='23' y2='15'/></svg>");
+}
+.cs-ic-unmute {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M15.54 8.46a5 5 0 0 1 0 7.07'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14'/></svg>");
+}
+.cs-ic-fullscreen {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M8 3H5a2 2 0 0 0-2 2v3'/><path d='M21 8V5a2 2 0 0 0-2-2h-3'/><path d='M3 16v3a2 2 0 0 0 2 2h3'/><path d='M16 21h3a2 2 0 0 0 2-2v-3'/></svg>");
+}
+.cs-ic-fullscreen-exit {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 3v4a2 2 0 0 1-2 2H3'/><path d='M21 8h-4a2 2 0 0 1-2-2V2'/><path d='M3 16h4a2 2 0 0 1 2 2v4'/><path d='M16 21v-4a2 2 0 0 1 2-2h4'/></svg>");
+}
+.cs-ic-pause {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff' stroke='none'><rect x='6' y='4' width='4' height='16' rx='1'/><rect x='14' y='4' width='4' height='16' rx='1'/></svg>");
+}
+.cs-ic-play-btn {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff' stroke='none'><polygon points='6 4 20 12 6 20'/></svg>");
+}
+
+/* ===== 全屏覆盖层（放在 video 节点内部，随原生全屏一起展示） =====
+ * 左上角退出按钮 / 右侧悬浮按钮 / 底部录像带式进度条，共享同一套「无操作自动隐藏」过渡与状态类。
+ *
+ * 重要：本区块内所有尺寸一律使用 px，不能用 rpx。rpx 的基准是「屏幕宽度 = 750rpx」，进入
+ * 原生横屏全屏后该基准会变成屏幕长边，导致所有 rpx 尺寸相对于此时变短的屏幕高度整体放大
+ * 约一倍多，表现为刻度文字被裁切、色块过粗、按钮过大、整个进度条挤占半个屏幕。px 是绝对
+ * 单位，不受这个重算影响。
+ */
+.cs-fs-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+}
+/* 铺满全屏的透明层，仅用于接收「点按呼出/隐藏控件」的点击，位于按钮与进度条之下 */
+.cs-fs-tap-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+.cs-fs-back-btn {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12;
+  transition: opacity 0.25s ease;
+}
+.cs-fs-back-btn .cs-ic {
+  width: 20px;
+  height: 20px;
+}
+.cs-fs-float-controls {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  z-index: 12;
+  transition: opacity 0.25s ease;
+}
+.cs-fs-float-controls .cs-float-btn {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 12px;
+}
+.cs-fs-float-controls .cs-float-btn:last-child {
+  margin-bottom: 0;
+}
+.cs-fs-float-controls .cs-float-btn .cs-ic {
+  width: 18px;
+  height: 18px;
+}
+.cs-fs-controls--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+/* 全屏内的加载/缓冲动画：不随控制条隐藏，尺寸必须用 px（原因见 .cs-fs-overlay 区块说明） */
+.cs-fs-loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 13;
+  pointer-events: none;
+}
+.cs-fs-loading-spinner {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+.cs-fs-loading-tip {
+  margin-top: 10px;
+  font-size: 13px;
+}
+.cs-ic-back--light {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='15 18 9 12 15 6'/></svg>");
+}
+
+/* ===== 时间轴：可横向拖拽定位到具体时间点，支持缩放 ===== */
+.cs-timeline {
+  position: relative;
+  width: 100%;
+  padding: 40rpx 0 56rpx;
+  background: #ffffff;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.cs-timeline-zoom {
+  position: absolute;
+  top: 12rpx;
+  right: 24rpx;
+  display: flex;
+  z-index: 6;
+}
+.cs-zoom-btn {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: #1976ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12rpx;
+}
+.cs-zoom-btn:first-child {
+  margin-left: 0;
+}
+.cs-zoom-btn--disabled {
+  background: #b0c7ee;
+}
+.cs-ic-zoom-plus,
+.cs-ic-zoom-minus {
+  width: 24rpx;
+  height: 24rpx;
+  background: no-repeat center / contain;
+}
+.cs-ic-zoom-plus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><line x1='12' y1='5' x2='12' y2='19'/><line x1='5' y1='12' x2='19' y2='12'/></svg>");
+}
+.cs-ic-zoom-minus {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><line x1='5' y1='12' x2='19' y2='12'/></svg>");
+}
+
+.cs-timeline-scroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.cs-timeline-inner {
+  position: relative;
+  height: 92rpx;
+}
+.cs-timeline-ticks {
+  position: relative;
+  height: 56rpx;
+}
+.cs-timeline-tick {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+.cs-timeline-tick::after {
+  content: '';
+  width: 2rpx;
+  height: 12rpx;
+  background: #c4c8cf;
+  margin-top: 4rpx;
+}
+.cs-timeline-tick--major::after {
+  height: 16rpx;
+  background: #9da3b0;
+}
+.cs-timeline-tick-label {
+  font-size: 18rpx;
+  color: #8a8e94;
+  white-space: nowrap;
+}
+.cs-timeline-bar {
+  position: relative;
+  margin-top: 8rpx;
+  height: 28rpx;
+  background: #e4e7ed;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+.cs-timeline-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #3d6eff;
+}
+
+/* 固定在视口水平中心的指示线 + 时间气泡，随滚动/播放进度联动 */
+.cs-timeline-indicator {
+  position: absolute;
+  left: 50%;
+  top: 40rpx;
+  height: 92rpx;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+}
+.cs-timeline-indicator-line {
+  width: 2rpx;
+  height: 100%;
+  background: #34c759;
+  margin: 0 auto;
+}
+.cs-timeline-indicator-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 6rpx;
+  background: #34c759;
+  color: #ffffff;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  white-space: nowrap;
+}
+.cs-timeline-indicator-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6rpx solid transparent;
+  border-right: 6rpx solid transparent;
+  border-bottom: 8rpx solid #34c759;
+}
+.cs-timeline-empty-tip {
+  position: absolute;
+  left: 50%;
+  top: 40rpx;
+  transform: translateX(-50%);
+  font-size: 22rpx;
+  color: #b0b3b8;
+}
+
+/* ===== 全屏内叠加的录像带式进度条 =====
+ * 刻意不使用 <scroll-view>：它在原生全屏下会出现布局/裁切异常（刻度文字被截断），且原生横向
+ * 拖拽手势在该场景下也不稳定。这里改为固定高度的 viewport + transform: translateX 自绘平移的
+ * track，配合自定义 touchmove 拖拽（见 onFsTimelineTouchMove），显示与手势都完全可控。
+ * 无操作 3s 后自动隐藏（共享 .cs-fs-controls--hidden），点按视频区域可重新呼出。
+ *
+ * 同样注意：这里所有尺寸必须用 px 而非 rpx，原因见上方 .cs-fs-overlay 区块的说明。共享类
+ * （.cs-timeline-tick / .cs-timeline-bar / .cs-timeline-indicator-tooltip 等）里以 rpx
+ * 定义的尺寸都要在本区块用 px 覆盖掉。
+ */
+.cs-fs-timeline-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 104px;
+  padding-top: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+  box-sizing: border-box;
+  /* 横向裁切放在这一层：轨道超出屏幕的部分由它裁掉。刻度文字位于 padding-top 之内的内容区，
+   * 因此不会像把 overflow 放在 viewport 上那样被截掉上半（之前刻度数字被遮挡就是这个原因）。*/
+  overflow: hidden;
+  transition: opacity 0.25s ease;
+  opacity: 1;
+  z-index: 11;
+}
+.cs-fs-timeline-viewport {
+  position: relative;
+  width: 100%;
+  height: 60px;
+}
+.cs-fs-timeline-track {
+  position: relative;
+  height: 60px;
+  will-change: transform;
+}
+.cs-fs-timeline-track--animate {
+  transition: transform 0.2s ease-out;
+}
+.cs-fs-timeline-ticks {
+  position: relative;
+  height: 36px;
+}
+.cs-fs-timeline-tick.cs-timeline-tick::after {
+  height: 6px;
+  margin-top: 2px;
+  background: rgba(255, 255, 255, 0.45);
+}
+.cs-fs-timeline-tick.cs-timeline-tick--major::after {
+  height: 9px;
+  background: rgba(255, 255, 255, 0.85);
+}
+.cs-fs-timeline-tick-label {
+  font-size: 11px;
+  line-height: 14px;
+  color: rgba(255, 255, 255, 0.9);
+}
+.cs-fs-timeline-bar {
+  height: 14px;
+  margin-top: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.28);
+}
+.cs-fs-timeline-indicator {
+  top: 16px;
+  height: 60px;
+}
+.cs-fs-timeline-indicator .cs-timeline-indicator-line {
+  width: 1px;
+}
+.cs-fs-timeline-indicator .cs-timeline-indicator-tooltip {
+  margin-top: 3px;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.cs-fs-timeline-indicator .cs-timeline-indicator-tooltip::before {
+  top: -4px;
+  border-left-width: 3px;
+  border-right-width: 3px;
+  border-bottom-width: 4px;
+}
+
+.cs-divider {
+  height: 12rpx;
+  background: #f4f5f7;
+}
+
+/* ===== 列表 / 空态 ===== */
+.cs-record-area {
+  flex: 1;
+  background: #f4f5f7;
+  display: flex;
+  flex-direction: column;
+}
+.cs-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 600rpx;
+}
+.cs-empty-text {
+  font-size: 28rpx;
+  color: #b0b3b8;
+  letter-spacing: 1rpx;
+}
+.cs-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 600rpx;
+}
+.cs-loading-text {
+  font-size: 26rpx;
+  color: #b0b3b8;
+}
+
+/* 列表项（有数据时），对齐安卓端 iot_item_cloud_storage_event.xml 布局 */
+.cs-record-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  padding: 18rpx;
+  background: #ffffff;
+  margin: 16rpx 24rpx 0;
+  border-radius: 16rpx;
+}
+/* 时长 / 「抓图」标签：固定在卡片右上角，与缩略图、标题行的行首在同一水平线上 */
+.cs-record-duration {
+  position: absolute;
+  top: 18rpx;
+  right: 18rpx;
+  font-size: 20rpx;
+  color: #9da3b0;
+}
+.cs-record-thumb {
+  position: relative;
+  width: 156rpx;
+  height: 116rpx;
+  border-radius: 16rpx;
+  background: #1f1c1a;
+  margin-right: 18rpx;
+  flex: none;
+  overflow: hidden;
+}
+.cs-record-thumb-img {
+  width: 100%;
+  height: 100%;
+}
+.cs-ic-play {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: -20rpx;
+  margin-top: -20rpx;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(255,255,255,0.9)' stroke='none'><polygon points='6 4 20 12 6 20'/></svg>");
+}
+.cs-record-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding-right: 70rpx;
+}
+.cs-record-type {
+  font-size: 20rpx;
+  color: #006eff;
+  background: #e8f1ff;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cs-record-time {
+  margin-top: 6rpx;
+  font-size: 26rpx;
+  color: #15161a;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.cs-record-action-row {
+  margin-top: 6rpx;
+  display: flex;
+  align-items: center;
+}
+.cs-ic-play-mini {
+  width: 22rpx;
+  height: 22rpx;
+  margin-right: 6rpx;
+  flex: none;
+  background: no-repeat center / contain;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23006eff' stroke='none'><circle cx='12' cy='12' r='10' fill='%23e8f1ff'/><polygon points='10 8 16 12 10 16'/></svg>");
+}
+.cs-record-action-text {
+  font-size: 20rpx;
+  color: #6b7280;
+}

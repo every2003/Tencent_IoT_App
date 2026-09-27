@@ -1,0 +1,106 @@
+<incoming-call-banner />
+<view class="page">
+  <!-- 顶部蓝色导航栏 -->
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="topbar-row" style="height: {{navBarHeight}}px;">
+      <view class="back-btn" bindtap="onBack" hover-class="back-hover">
+        <text class="back-arrow">←</text>
+      </view>
+      <view class="title-text">{{title}}</view>
+      <view class="ch-tag" bindtap="onSwitchChannel" hover-class="ch-tag-hover">{{channelLabel}}</view>
+    </view>
+  </view>
+
+  <!-- 视频区 -->
+  <view class="video-wrap">
+    <view class="video-area">
+      <!-- 多通道分屏（对齐 iOS MultiChannelGridView：1 满屏 / 2 左右 / 3-4 2x2） -->
+      <view
+        wx:for="{{remotePlayers}}"
+        wx:key="componentId"
+        class="video-cell"
+        style="{{item.style}}"
+      >
+        <iot-player class="video-cell-player" component-id="{{item.componentId}}" />
+        <view class="video-cell-tag">通道{{item.channelId}}</view>
+      </view>
+      <!-- 等待远端流提示 -->
+      <view class="loader" wx:if="{{loading}}"></view>
+      <view class="err-tip" wx:elif="{{!loading && remotePlayers.length === 0 && !errorMsg}}">等待远端视频流...</view>
+
+      <!-- 本地推流组件 -->
+      <iot-pusher
+        style="position:absolute;left:24rpx;bottom:24rpx;width:135rpx;height:240rpx;z-index:3;"
+      />
+
+      <!-- 右侧悬浮控件 -->
+      <view class="float-ctrl">
+        <view class="fc-btn" bindtap="toggleSpeaker" hover-class="fc-hover">
+          <view class="fc-icon {{speakerOn ? 'speaker-on' : 'speaker-off'}}"></view>
+        </view>
+        <view class="fc-btn rate-btn" bindtap="toggleQuality" hover-class="fc-hover">
+          <text class="rate-text">{{isHighQuality ? '高清' : '标清'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 两个操作按钮：对讲 / 截图 -->
+  <view class="action-row">
+    <view class="action-cell" bindtap="onIntercom" hover-class="action-hover">
+      <view class="action-box {{intercomActive ? 'intercom-active' : ''}}">
+        <view class="action-icon ic-mic"></view>
+      </view>
+      <text class="action-label">对讲</text>
+    </view>
+    <view class="action-cell" bindtap="onSnapshot" hover-class="action-hover">
+      <view class="action-box">
+        <view class="action-icon ic-camera"></view>
+      </view>
+      <text class="action-label">截图</text>
+    </view>
+  </view>
+
+  <!-- 方向控制盘 -->
+  <view class="dpad-wrap">
+    <view class="dpad">
+      <view class="dpad-btn dpad-up" bindtap="onDirection" data-dir="up" hover-class="dpad-hover">
+        <image class="dpad-arrow" src="/images/icon_arrow_up.svg" mode="aspectFit" />
+      </view>
+      <view class="dpad-btn dpad-left" bindtap="onDirection" data-dir="left" hover-class="dpad-hover">
+        <image class="dpad-arrow dpad-arrow-left" src="/images/icon_arrow_up.svg" mode="aspectFit" />
+      </view>
+      <view class="dpad-btn dpad-right" bindtap="onDirection" data-dir="right" hover-class="dpad-hover">
+        <image class="dpad-arrow dpad-arrow-right" src="/images/icon_arrow_up.svg" mode="aspectFit" />
+      </view>
+      <view class="dpad-btn dpad-down" bindtap="onDirection" data-dir="down" hover-class="dpad-hover">
+        <image class="dpad-arrow dpad-arrow-down" src="/images/icon_arrow_up.svg" mode="aspectFit" />
+      </view>
+      <view class="dpad-center" bindtap="onDirection" data-dir="center" hover-class="dpad-center-hover"></view>
+    </view>
+  </view>
+
+  <!-- 错误提示气泡 -->
+  <view class="err-tip" wx:if="{{!loading && errorMsg}}">{{errorMsg}}</view>
+
+  <!-- 底部分享 -->
+  <view class="bottom-row">
+    <view class="bot-btn" bindtap="onShare" hover-class="bot-hover">
+      <view class="bot-icon ic-share"></view>
+      <text class="bot-label">分享</text>
+    </view>
+  </view>
+
+  <!-- 设备分享码弹层 -->
+  <view class="share-mask" wx:if="{{shareVisible}}" bindtap="onCloseShare"></view>
+  <view class="share-sheet" wx:if="{{shareVisible}}" catchtap="">
+    <view class="share-title">设备分享码</view>
+    <view class="share-code-box">
+      <text class="share-code-text" selectable="{{true}}" space="nbsp">{{shareCode}}</text>
+    </view>
+    <view class="share-actions">
+      <view class="share-btn share-btn-cancel" bindtap="onCloseShare" hover-class="share-btn-hover">关闭</view>
+      <view class="share-btn share-btn-confirm" bindtap="onCopyShare" hover-class="share-btn-hover">复制分享码</view>
+    </view>
+  </view>
+</view>

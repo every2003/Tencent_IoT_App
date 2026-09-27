@@ -1,0 +1,9 @@
+{
+  "navigationStyle": "default",
+  "navigationBarTitleText": "智能吸顶灯",
+  "backgroundColor": "#f5f6f8",
+  "navigationBarBackgroundColor": "#1976ff",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}

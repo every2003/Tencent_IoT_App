@@ -1,0 +1,117 @@
+.lamp-page {
+  padding: 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background: #f5f6f8;
+}
+
+.loading-tip {
+  text-align: center;
+  color: #999;
+  font-size: 26rpx;
+  padding: 16rpx 0 0;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 24rpx;
+}
+
+/* 电源开关 */
+.power-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.power-icon {
+  font-size: 48rpx;
+  margin-right: 24rpx;
+  opacity: 0.4;
+}
+
+.power-icon.on {
+  opacity: 1;
+}
+
+.power-text {
+  flex: 1;
+}
+
+.power-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.power-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+
+/* 滑杆 */
+.slider-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.slider {
+  flex: 1;
+  margin: 0;
+}
+
+.slider-value {
+  width: 110rpx;
+  text-align: right;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* 场景模式 */
+.mode-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.mode-chip {
+  width: calc((100% - 60rpx) / 4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx 0;
+  background: #f2f3f5;
+  border-radius: 20rpx;
+}
+
+.mode-chip.active {
+  background: #1976ff;
+}
+
+.mode-icon {
+  font-size: 40rpx;
+  margin-bottom: 10rpx;
+}
+
+.mode-label {
+  font-size: 24rpx;
+  color: #1a1a1a;
+}
+
+.mode-chip.active .mode-label {
+  color: #ffffff;
+}

@@ -1,0 +1,10 @@
+# 微信开发者工具本地私有配置
+project.private.config.json
+
+# 依赖与构建产物
+node_modules/
+dist/
+
+# 日志与系统文件
+*.log
+.DS_Store

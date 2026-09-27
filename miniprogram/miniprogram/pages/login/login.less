@@ -1,0 +1,148 @@
+.login-page {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-header {
+  background: linear-gradient(180deg, #2a7bff 0%, #1976ff 100%);
+  padding: 80rpx 60rpx 120rpx 60rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom-left-radius: 40rpx;
+  border-bottom-right-radius: 40rpx;
+}
+
+.logo-circle {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon {
+  width: 146rpx;
+  height: 146rpx;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M17,10.5V7c0,-0.55 -0.45,-1 -1,-1H4c-0.55,0 -1,0.45 -1,1v10c0,0.55 0.45,1 1,1h12c0.55,0 1,-0.45 1,-1v-3.5l4,4v-11L17,10.5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.brand {
+  margin-top: 28rpx;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.brand-sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.login-card {
+  flex: 1;
+  background: #ffffff;
+  margin-top: -40rpx;
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  padding: 60rpx 48rpx 48rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #111;
+}
+
+.card-sub {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #8a8f99;
+  margin-bottom: 40rpx;
+}
+
+.form-item {
+  margin-bottom: 28rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #222;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.input-wrap {
+  background: #f5f6f8;
+  border-radius: 18rpx;
+  height: 96rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24rpx;
+}
+
+.prefix-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  color: #8a8f99;
+}
+
+.input {
+  flex: 1;
+  height: 96rpx;
+  font-size: 30rpx;
+  color: #222;
+}
+
+.ph {
+  color: #b4b9c2;
+  font-size: 28rpx;
+}
+
+.eye-btn {
+  width: 44rpx;
+  height: 44rpx;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 40rpx 40rpx;
+}
+
+.eye-off {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8f99' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M9.88 9.88a3 3 0 1 0 4.24 4.24'/><path d='M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68'/><path d='M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61'/><line x1='2' x2='22' y1='2' y2='22'/></svg>");
+}
+
+.eye-on {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8f99' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>");
+}
+
+.login-btn {
+  margin-top: 60rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #1976ff;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-btn.disabled {
+  background: #a9c7ff;
+}

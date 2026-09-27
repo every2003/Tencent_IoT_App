@@ -1,0 +1,50 @@
+<!--
+  全局设备来电横幅。
+  通过 app.subscribeIncomingCall 订阅，每个登录态页面挂一份，
+  跨页面切换由各自实例独立接管，呈现一致。
+-->
+<view
+  wx:if="{{visible}}"
+  class="banner banner--{{mode}} {{exiting ? 'banner--exit' : 'banner--enter'}}"
+  style="top: {{topOffset}}px;"
+  hover-class="banner--hover"
+  hover-stay-time="80"
+  catchtap="onTapBanner"
+>
+  <view class="banner__inner">
+    <!-- 左：头像（与通话页 user-avatar 风格一致：圆角 + 暖棕渐变 fallback） -->
+    <view class="banner__avatar">
+      <image
+        wx:if="{{avatar}}"
+        class="banner__avatar-img"
+        src="{{avatar}}"
+        mode="aspectFill"
+      />
+      <view wx:else class="banner__avatar-fallback"></view>
+    </view>
+
+    <!-- 中：名称 + 邀请文案 -->
+    <view class="banner__text">
+      <view class="banner__name">{{name}}</view>
+      <view class="banner__sub">{{mode === 'video' ? '邀请你视频通话…' : '邀请你语音通话…'}}</view>
+    </view>
+
+    <!-- 右：操作按钮 -->
+    <view class="banner__actions">
+      <view
+        class="banner__btn banner__btn--reject"
+        hover-class="banner__btn--hover"
+        catchtap="onReject"
+      >
+        <view class="icon icon-hangup"></view>
+      </view>
+      <view
+        class="banner__btn banner__btn--accept"
+        hover-class="banner__btn--hover"
+        catchtap="onAccept"
+      >
+        <view class="icon icon-phone"></view>
+      </view>
+    </view>
+  </view>
+</view>

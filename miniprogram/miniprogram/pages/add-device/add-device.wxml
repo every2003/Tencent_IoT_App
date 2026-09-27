@@ -1,0 +1,85 @@
+<incoming-call-banner />
+<view class="page">
+  <!-- 顶部导航 -->
+  <view class="topbar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-row" style="height: {{navBarHeight}}px;">
+      <view class="back" bindtap="onBack" hover-class="back-hover">
+        <text class="back-arrow">←</text>
+      </view>
+      <view class="nav-title">添加设备</view>
+      <view class="nav-placeholder" style="width: {{menuRight}}px;"></view>
+    </view>
+  </view>
+
+  <!-- 扫码区 -->
+  <view class="scan-area" bindtap="onScan" hover-class="scan-hover">
+    <view class="scan-box">
+      <view class="qr-icon"></view>
+      <view class="scan-text">扫描设备二维码</view>
+    </view>
+  </view>
+
+  <view class="divider">
+    <view class="divider-line"></view>
+    <text class="divider-text">或手动输入</text>
+    <view class="divider-line"></view>
+  </view>
+
+  <!-- 表单 -->
+  <view class="form">
+    <view class="form-item">
+      <view class="form-label">绑定家庭</view>
+      <view class="form-input-row" bindtap="onSwitchFamily" hover-class="input-hover">
+        <text class="fam-emoji">🏠</text>
+        <view class="form-value">{{family.name}}</view>
+        <text class="switch-text">切换</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">产品 ID</view>
+      <view class="form-input-row">
+        <view class="input-icon ii-doc"></view>
+        <input
+          class="form-input"
+          placeholder="请输入产品 ID"
+          placeholder-class="ph"
+          value="{{pid}}"
+          bindinput="onPidInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">设备名称</view>
+      <view class="form-input-row">
+        <view class="input-icon ii-phone"></view>
+        <input
+          class="form-input"
+          placeholder="请输入设备名称"
+          placeholder-class="ph"
+          value="{{deviceName}}"
+          bindinput="onNameInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">签名</view>
+      <view class="form-input-row">
+        <view class="input-icon ii-pen"></view>
+        <input
+          class="form-input"
+          placeholder="请输入签名"
+          placeholder-class="ph"
+          value="{{signature}}"
+          bindinput="onSignInput"
+        />
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-wrap">
+    <view class="submit-btn" bindtap="onSubmit" hover-class="submit-hover">添加设备</view>
+  </view>
+</view>

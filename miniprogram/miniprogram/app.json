@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/device/device",
+    "pages/call/call",
+    "pages/message/message",
+    "pages/push-notify/push-notify",
+    "pages/profile/profile",
+    "pages/add-device/add-device",
+    "pages/preview/preview",
+    "pages/cloud-storage/cloud-storage",
+    "pages/lamp/lamp"
+  ],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom",
+    "backgroundColor": "#1976ff"
+  },
+  "style": "v2",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "disableABTest": true,
+      "sdkVersionBegin": "3.0.0",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "usingComponents": {
+    "incoming-call-banner": "/components/incoming-call-banner/incoming-call-banner"
+  },
+  "plugins": {
+    "tx-iot-sdk": {
+      "version": "1.0.5",
+      "provider": "wx5201edc27c631209"
+    },
+    "wmpf-voip": {
+      "version": "latest",
+      "provider": "wxf830863afde621eb"
+    }
+  }
+}

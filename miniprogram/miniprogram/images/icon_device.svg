@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  默认设备图标：当后端返回的 iconUrl 为空时使用。
+  视觉与鸿蒙端 icon_device 资源风格一致：上方摄像头球 + 下方半圆机身。
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FAFBFD"/>
+      <stop offset="1" stop-color="#E6EAF1"/>
+    </linearGradient>
+    <radialGradient id="lens" cx="0.5" cy="0.4" r="0.6">
+      <stop offset="0" stop-color="#5B6582"/>
+      <stop offset="1" stop-color="#3A405C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 机身（下方半圆） -->
+  <path d="M30 168 Q30 110 100 110 Q170 110 170 168 Q170 178 160 178 L40 178 Q30 178 30 168 Z"
+        fill="url(#bg)" stroke="#C8CDD8" stroke-width="2"/>
+
+  <!-- 机身中部按钮 -->
+  <circle cx="100" cy="155" r="9" fill="#E6EAF1" stroke="#C8CDD8" stroke-width="1.5"/>
+  <circle cx="100" cy="155" r="4" fill="#3A405C"/>
+
+  <!-- 头部（球） -->
+  <circle cx="100" cy="78" r="48" fill="url(#bg)" stroke="#C8CDD8" stroke-width="2"/>
+
+  <!-- 镜头外圈 -->
+  <circle cx="100" cy="78" r="30" fill="url(#lens)"/>
+  <!-- 镜头中圈 -->
+  <circle cx="100" cy="78" r="22" fill="#3A405C"/>
+  <!-- 镜头内圈 + 高光 -->
+  <circle cx="100" cy="78" r="6" fill="#525B76"/>
+</svg>
