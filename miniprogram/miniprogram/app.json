@@ -33,7 +33,7 @@
   },
   "plugins": {
     "tx-iot-sdk": {
-      "version": "1.0.5",
+      "version": "latest",
       "provider": "wx5201edc27c631209"
     },
     "wmpf-voip": {

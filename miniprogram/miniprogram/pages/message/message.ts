@@ -1,8 +1,6 @@
 // 消息中心：从 globalData.pushMessages 实时读取，监听全局推送变化。
 // 插件层只透传 SDK 推送，文案/已读/Toast 等 UI 行为均由本页 + app.ts 决定。
 
-export {};
-
 const app = getApp<IAppOption>();
 
 Page({

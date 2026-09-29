@@ -1,9 +1,5 @@
 import { getIoTEngine, logout as sdkLogout } from '../../utils/iotEngine';
 
-interface LoginInfo {
-  openId?: string;
-}
-
 function getEngine() {
   return getIoTEngine();
 }

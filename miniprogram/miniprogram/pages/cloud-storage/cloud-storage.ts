@@ -472,7 +472,7 @@ Page({
     getCloudStorageEventList(productId, deviceName, channelIndex, date, pageToken)
       .then((page) => {
         if (token !== this._dateRequestToken) return; // 用户已切换日期/通道，丢弃过期结果
-        const all = accumulated.concat(page.list);
+        const all = accumulated.concat(page.dataList);
         if (page.nextPageToken) {
           this._fetchEventPage(
             productId, deviceName, channelIndex, date, page.nextPageToken, all, token,

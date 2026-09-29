@@ -1,3 +1,5 @@
+/// <reference path="./types/index.d.ts" />
+
 /**
  * Demo 层用来表达消息中心 / 推送通知的统一 UI 模型。
  *

@@ -7,36 +7,9 @@
  * - 跨页面切换：旧页面 detached、新页面 attached 自动接管，弹窗保持
  */
 
-export {};
-
 const app = getApp<IAppOption>();
 
-type BannerData = {
-  visible: boolean;
-  exiting: boolean;
-  mode: 'audio' | 'video';
-  name: string;
-  avatar: string;
-  productId: string;
-  deviceName: string;
-  topOffset: number;
-};
-
-type BannerMethod = {
-  noop(): void;
-  _navigateToCall(accepted: boolean): void;
-  onAccept(): void;
-  onTapBanner(): void;
-  onReject(): void;
-  _playExit(): void;
-};
-
-type BannerInstanceProperty = {
-  _unsub: null | (() => void);
-  _exitTimer: null | ReturnType<typeof setTimeout>;
-};
-
-Component<BannerData, {}, BannerMethod, [], BannerInstanceProperty>({
+Component({
   options: {
     multipleSlots: false,
     addGlobalClass: false,
@@ -55,11 +28,6 @@ Component<BannerData, {}, BannerMethod, [], BannerInstanceProperty>({
   },
 
   lifetimes: {
-    created() {
-      // 内部字段初始化（非 data，避免触发 setData）
-      this._unsub = null;
-      this._exitTimer = null;
-    },
     attached() {
       // 顶部偏移：状态栏高度 + 8rpx ≈ 4px 视觉间距
       try {
@@ -108,6 +76,10 @@ Component<BannerData, {}, BannerMethod, [], BannerInstanceProperty>({
       }
     },
   },
+
+  // 内部字段（非 data，避免触发 setData）
+  _unsub: null as null | (() => void),
+  _exitTimer: null as null | ReturnType<typeof setTimeout>,
 
   methods: {
     /** 占位：阻止点击穿透到下层页面（catchtap） */

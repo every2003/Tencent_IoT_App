@@ -2,11 +2,19 @@
   "name": "miniprogram-ts-less-quickstart",
   "version": "1.0.0",
   "description": "",
+  "scripts": {
+    "gen:plugin-version": "node scripts/gen-plugin-version.js",
+    "build:plugin": "tsc -p plugin/tsconfig.json",
+    "watch:plugin": "npm run gen:plugin-version && tsc -p plugin/tsconfig.json --watch",
+    "clean:plugin": "node -e \"const fs=require('fs'),path=require('path');function walk(d){for(const f of fs.readdirSync(d)){const p=path.join(d,f);const s=fs.statSync(p);if(s.isDirectory()){if(p.includes(path.join('plugin','sdk')))continue;walk(p);}else if(f.endsWith('.js')){const ts=p.replace(/\\.js$/,'.ts');if(fs.existsSync(ts)){fs.unlinkSync(p);console.log('removed',p);}}}}walk('plugin');\"",
+    "prebuild:plugin": "npm run gen:plugin-version",
+    "pack:plugin": "npm run build:plugin && node scripts/pack-plugin.js"
+  },
   "keywords": [],
   "author": "",
   "license": "",
   "devDependencies": {
-    "miniprogram-api-typings": "^5.2.3",
+    "miniprogram-api-typings": "^2.8.3-1",
     "typescript": "^5.4.5"
   }
 }
